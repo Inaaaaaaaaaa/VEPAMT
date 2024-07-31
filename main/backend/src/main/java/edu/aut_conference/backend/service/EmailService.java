@@ -1,4 +1,4 @@
-package edu.aut_conference.backend.service;
+/*package edu.aut_conference.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -47,4 +47,4 @@ public class EmailService {
             throw new RuntimeException("Failed to send email", e);
         }
     }
-}
+}*/

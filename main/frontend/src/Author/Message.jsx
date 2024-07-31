@@ -1,25 +1,34 @@
-// Message.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MessageBox from './MessageBox';
+import { fetchMessages } from '../api'; // 引入API调用
 
 function Message() {
-  // 定义一些模拟的消息数据
-  const messages = [
-    { type: 'submission', title: 'Submission Received', content: 'Your paper submission has been received.', timestamp: '2024-07-25T08:00:00Z' },
-    { type: 'conference', title: 'Conference Schedule', content: 'The conference schedule has been updated.', timestamp: '2024-07-24T14:00:00Z' },
-    { type: 'other', title: 'System Maintenance', content: 'The system will be down for maintenance at midnight.', timestamp: '2024-07-24T22:00:00Z' },
-    // 可以添加更多消息
-  ];
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const data = await fetchMessages();
+        console.log(data); // 在控制台打印数据
+        setMessages(data);
+      } catch (error) {
+        console.error('Failed to fetch messages:', error);
+      }
+    };
+
+    getMessages();
+  }, []);
 
   return (
     <div>
-      <h1>Message</h1>
-      <p>Welcome to the Message page!</p>
-      <div>
-        {messages.map((msg, index) => (
-          <MessageBox key={index} message={msg} />
+      <h1>Messages</h1>
+      <ul>
+        {messages.map((message) => (
+          <li key={message.id}>
+            <MessageBox message={message} />
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

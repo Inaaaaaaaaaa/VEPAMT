@@ -52,6 +52,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- 将 javax.persistence-api 替换为 jakarta.persistence-api -->
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
 		<!-- Use Jakarta Mail API dependencies -->
 		<dependency>
 			<groupId>jakarta.mail</groupId>

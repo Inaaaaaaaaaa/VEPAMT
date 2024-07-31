@@ -1,4 +1,4 @@
-package edu.aut_conference.backend.model;
+/*package edu.aut_conference.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -65,4 +65,4 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-}
+}*/

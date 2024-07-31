@@ -1,4 +1,4 @@
-package edu.aut_conference.backend.controller;
+/*package edu.aut_conference.backend.controller;
 
 import edu.aut_conference.backend.model.User;
 import edu.aut_conference.backend.repository.UserRepository;
@@ -37,4 +37,4 @@ public class UserController {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-}
+}*/

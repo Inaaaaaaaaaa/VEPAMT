@@ -1,4 +1,4 @@
-package edu.aut_conference.backend.service;
+/*package edu.aut_conference.backend.service;
 
 import edu.aut_conference.backend.model.User;
 import edu.aut_conference.backend.repository.UserRepository;
@@ -35,4 +35,4 @@ public class AuthService {
             return "Email not registered";
         }
     }
-}
+}*/
