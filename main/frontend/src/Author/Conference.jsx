@@ -1,6 +1,6 @@
 // Conference.js
 import React from 'react';
-import ConferenceBox from './ConferenceBox';
+import ConferenceBox from './Conference/ConferenceBox';
 
 function Conference() {
   // 定义一些模拟的会议数据

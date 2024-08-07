@@ -1,8 +1,9 @@
 import React from 'react';
 import { CalendarDaysIcon, TagIcon, UserCircleIcon } from '@heroicons/react/20/solid';
+import { Link } from 'react-router-dom';
 
 export default function SubmissionSummary({ submission }) {
-  const { paperName, track, status, author, submitDate, keywords } = submission;
+  const { id, paperName, track, status, author, submitDate, keywords } = submission;
 
   return (
     <div className="w-full p-4 md:w-1/2 lg:w-1/2">
@@ -18,7 +19,8 @@ export default function SubmissionSummary({ submission }) {
             <dd className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium ring-1 ring-inset ${
               status === 'Approve' ? 'bg-green-50 text-green-700 ring-green-600/20' : 
               status === 'Pending' ? 'bg-yellow-50 text-yellow-700 ring-yellow-600/20' :
-              'bg-red-50 text-red-700 ring-red-600/20'
+              status === 'Rejected' ? 'bg-red-50 text-red-700 ring-red-600/20' :
+              'bg-gray-50 text-gray-700 ring-gray-600/20'
             }`}>
               {status}
             </dd>
@@ -48,9 +50,9 @@ export default function SubmissionSummary({ submission }) {
           </div>
         </dl>
         <div className="mt-6 border-t border-gray-900/5 px-6 py-6">
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+          <Link to={`/submission/${id}`} className="text-sm font-semibold leading-6 text-gray-900">
             View details <span aria-hidden="true">&rarr;</span>
-          </a>
+          </Link>
         </div>
       </div>
     </div>
