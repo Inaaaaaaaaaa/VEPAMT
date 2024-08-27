@@ -1,0 +1,29 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    padding: 10px;
+    background-color: rgb(243, 242, 242);
+}
+
+.search-input {
+    flex-grow: 0;  
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 260px; 
+}
+
+.icon-group {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+}
+
+.icon, .dropdown {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: black;
+}
+

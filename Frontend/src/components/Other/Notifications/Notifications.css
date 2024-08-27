@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+.notification-container {
+    background-color: rgb(255, 255, 255);
+    max-height: 90%;
+    max-width: 82%;
+    margin: auto; 
+    border-radius: 10px;
+    overflow: hidden;
+    overflow-y: auto;
+    margin-left: 280px;
+    margin-top: 12px;
+    overflow-x: auto;
+}
+
+
+h1 {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    margin-right: 900px;
+}
+
+p {
+    text-align: center;
+    color: #7f8c8d;
+    margin-top: 20px;
+    margin-right: 900px;
+}
+
+.notification-list {
+    list-style-type: none;
+    padding: 4;
+    margin-left: 440px;
+    width: 65%;
+    overflow-y: auto;
+    max-height: 520px;
+}
+
+.notification-item {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-item.read {
+    background-color: #e0e0e0; /* Darkened background for read notifications */
+}
+
+.notification-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.notification-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: #3498db;
+    transition: width 0.3s ease;
+}
+
+.notification-item:hover::before {
+    width: 10px;
+}
+
+.notification-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.notification-content {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.notification-time {
+    font-size: 0.8rem;
+    color: #95a5a6;
+    margin-top: 0.5rem;
+    text-align: right;
+}
+
+.no-notifications {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.notification-buttons {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.clear-button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.clear-button:hover {
+    background-color: #c0392b;
+}
+
+.read-all-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.read-all-button:hover {
+    background-color: #2980b9;
+}

@@ -1,0 +1,78 @@
+/*navbar side*/
+.sidenav 
+{
+    width: 240px;
+    background-color: white;
+    position: absolute;
+    height: 884px;
+    padding: 0 10px;
+    top: 0px;
+    transition: all 1s;
+    margin-top: 0px
+}
+
+.sidenav h1
+{
+    margin-left: 65px;
+}
+
+/* Adjusts space between the icon and text */
+.sidenav svg {
+    margin-bottom: -8px; 
+  }
+
+.sidenav a
+{
+    color: black;
+    margin-top: -16px;
+}
+
+.sidenav p
+{
+    color: rgb(209, 209, 209);
+    margin-top: -20px;
+    margin-left: 15px;
+}
+
+.sidenav h3
+{
+    margin-left: 15px;
+}
+
+/*Spacing on top of the side bar labels*/
+ul
+{
+    padding: 50px 0 0 0;
+    flex-direction: column;
+}
+
+ul li
+{
+    list-style-type: none;
+    /*Space between the side bar labels*/
+    margin: 40px 0;
+    margin-top: -40px;
+}
+
+ul li a{
+    text-decoration: none;
+    display: block;
+    font-size: 17px;
+    padding: 10px 10px;
+    border-radius: 8px;
+}
+
+/*Light blue when user hovers over the sidebar labels*/
+ul li a:hover,
+ul li a.active
+{
+    background-color: rgb(215, 235, 248);
+}
+
+/*Highlights tab*/
+.active-link 
+{
+    background-color: rgb(215, 235, 248);
+}
+
+
