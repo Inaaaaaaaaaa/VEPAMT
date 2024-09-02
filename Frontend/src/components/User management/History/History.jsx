@@ -137,7 +137,6 @@ const History = () => {
   );
 
   return (
-
       <div className='update-container'>
         {/* Chart component */}
         <div className='chart-container'>
