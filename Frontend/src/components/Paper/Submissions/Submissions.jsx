@@ -2,20 +2,20 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './Submissions.css';
 import axios from 'axios';
 import _ from 'lodash';
+import PieChart from './PieChart';
 
 const Submissions = () => {
   const [data, setData] = useState([]);
-  const [categories, setCategories] = useState([]); // New state for categories
+  const [categories, setCategories] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editStatus, setEditStatus] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('');
   const [sortBy, setSortBy] = useState('date');
   const [filteredPapers, setFilteredPapers] = useState([]);
-
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Number of items per page
+  const itemsPerPage = 5;
+  const [statusCounts, setStatusCounts] = useState({});
 
   useEffect(() => {
     axios
@@ -25,11 +25,13 @@ const Submissions = () => {
         setData(response.data);
         setFilteredPapers(response.data);
 
-        // Extract unique categories
         const uniqueCategories = _.uniq(
           response.data.map((paper) => paper.category)
-        ).filter(Boolean); // Remove undefined/null categories
+        ).filter(Boolean);
         setCategories(uniqueCategories);
+
+        const counts = _.countBy(response.data, 'submissions_status');
+        setStatusCounts(counts);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -59,28 +61,49 @@ const Submissions = () => {
     setFilteredPapers(filtered);
   };
 
-  //Linking backend with frontend
-  const handleStatusChange = useCallback((id, newStatus) => {
-    axios
-      .put(`http://localhost:8080/submissions/${id}/status`, { status: newStatus })
-      .then((response) => {
-        console.log('Status updated:', response.data);
+  // Updated handleStatusChange function
+  const handleStatusChange = useCallback(
+    async (id, newStatus) => {
+      if (!newStatus) return; 
 
-        setData((prevData) =>
-          prevData.map((item) =>
-            item.id === id ? { ...item, submissions_status: newStatus } : item
-          )
-        );
+      console.log(`Attempting to update status for ID: ${id} to: ${newStatus}`);
+      
+      try {
+        const response = await axios.put(`http://localhost:8080/users_name/${id}/status`, { submissions_status: newStatus });
 
-        setEditId(null);
-        setEditStatus('');
-      })
-      .catch((error) => {
+        // Check for successful response codes
+        if (response.status === 200 || response.status === 204) { 
+          console.log('Status updated successfully:', response.data);
+
+          setData((prevData) => {
+            const updatedData = prevData.map((item) =>
+              item.id === id ? { ...item, submissions_status: newStatus } : item
+            );
+
+            // Sync filtered data
+            setFilteredPapers(updatedData); 
+
+            // Recalculate the status counts after updating
+            const updatedCounts = _.countBy(updatedData, 'submissions_status');
+            setStatusCounts(updatedCounts);
+
+            return updatedData; // Return the new state for data
+          });
+
+          setEditId(null);
+          setEditStatus('');
+        } else {
+          console.error('Unexpected response status:', response.status);
+          alert('Failed to update the status. Please try again.');
+        }
+      } catch (error) {
         console.error('Error updating status:', error);
-      });
-  }, []);
+        alert('Failed to update the status. Please try again.');
+      }
+    },
+    [data] // Ensure `data` is in the dependency array
+  );
 
-  // Save the status if changed from user
   const handleEditStatus = (id, currentStatus) => {
     if (editId !== null) {
       handleStatusChange(id, editStatus); 
@@ -90,12 +113,10 @@ const Submissions = () => {
     }
   };
 
-  // Calculate current items
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredPapers.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Pagination controls
   const totalPages = Math.ceil(filteredPapers.length / itemsPerPage);
   const pageNumbers = [...Array(totalPages).keys()].map((i) => i + 1);
 
@@ -110,10 +131,12 @@ const Submissions = () => {
         </select>
       </div>
 
+      {/*Import chart into the web page*/}
+      <PieChart statusCounts={statusCounts} />
+
       <div id="papers-container">
         {currentItems.map((paper) => (
           <div key={paper.id} className="paper-card">
-            {/* Display Paper ID as Title */}
             <div className="paper-title">{paper.paperId || 'No Paper ID'}</div>
             <div className="paper-author">
               {paper.firstName} {paper.lastName}
@@ -138,7 +161,6 @@ const Submissions = () => {
         ))}
       </div>
 
-      {/* Pagination Controls */}
       <div className="pagination">
         <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}> Previous
         </button>
