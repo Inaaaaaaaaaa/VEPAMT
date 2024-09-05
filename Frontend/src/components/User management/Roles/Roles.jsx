@@ -9,6 +9,7 @@ const Roles = () => {
     const [data, setData] = useState([]);
 
     const roleSelection = [
+        //role selection manually 
         { value: 'Author', label: 'Author' },
         { value: 'Reviewer', label: 'Reviewer' },
         { value: 'Organizer', label: 'Organizer' },
@@ -34,6 +35,7 @@ const Roles = () => {
         const roles = selectedOptions.map(option => option.value);
         const updatedRole = roles.join(', ');
         const newData = data.map(item => {
+            //if item is updated, update this in backend 
             if (item.id === id) {
                 return { ...item, role: updatedRole };
             }
@@ -41,7 +43,7 @@ const Roles = () => {
         });
         setData(newData);
 
-        // Send updated role to the backend
+        // Send updated role to the backend and connect to the backend
         axios.put(`http://localhost:8080/users_name/${id}`, { role: updatedRole })
             .then(response => {
                 console.log('Role updated:', response.data);
@@ -61,6 +63,7 @@ const Roles = () => {
         );
     }, [searchInput, data]);
 
+    //list of column name and their database variables 
     const columns = useMemo(() => [
         { Header: "ID", accessor: "id" },
         { Header: "First name", accessor: "firstName" },
@@ -68,6 +71,7 @@ const Roles = () => {
         { Header: "Email", accessor: "email" },
         { Header: "Role", accessor: "role" },
         {
+            //allow assign roles to be a drop downbox based on the roles in the database
             Header: "Assign role",
             accessor: "roles",
             Cell: ({ row }) => (
@@ -91,7 +95,7 @@ const Roles = () => {
     } = useTable({ columns, data: filteredData });
 
     return (
-        <div className='background'>
+        //contents within the container to display the tables
             <div className='roles-container'>
                 <table {...getTableProps()}>
                     <thead>
@@ -117,7 +121,6 @@ const Roles = () => {
                     </tbody>
                 </table>
             </div>
-        </div>
     );
 };
 

@@ -77,7 +77,7 @@ const Update = () => {
       axios.put(`http://localhost:8080/users_name/${id}/password`, { password: newPassword })
         .then(response => {
           console.log('Password updated:', response.data);
-          // Optionally, refresh the data or update the state to reflect the change
+          //Refresh the data or update the state to reflect the change
           axios.get('http://localhost:8080/users_name')
             .then(response => {
               setData(response.data);
