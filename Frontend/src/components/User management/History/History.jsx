@@ -131,7 +131,8 @@ const History = () => {
     {
       columns,
       data,
-      initialState: { pageIndex: 0 }, // Start on the first page
+      // Start on the first page
+      initialState: { pageIndex: 0 }, 
     },
     usePagination
   );

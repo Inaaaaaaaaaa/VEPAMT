@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import './Review.css';
-import { useTable } from "react-table";
+import { useTable } from 'react-table';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select from 'react-select';
 import axios from 'axios';
@@ -8,30 +8,39 @@ import axios from 'axios';
 const Review = () => {
     const [editingRowId, setEditingRowId] = useState(null);
     const [data, setData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const paperSelection = [
+    // Define the paper selection options
+    const paperSelection = useMemo(() => [
         { value: 'Comp702', label: 'Comp702' },
         { value: 'Comp703', label: 'Comp703' },
         { value: 'Comp603', label: 'Comp603' }
-    ];
+    ], []);
 
+    // Fetch data from the backend
     useEffect(() => {
-        // Fetch data from the backend
+        setLoading(true);
         axios.get('http://localhost:8080/users_name')
             .then(response => {
                 setData(response.data);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
+                setError('Failed to fetch data. Please try again later.');
+            })
+            .finally(() => {
+                setLoading(false);
             });
     }, []);
 
-    const handleInputChange = (e, id, field) => {
-        const newData = data.map(item => item.id === id ? { ...item, [field]: e.target.value } : item);
-        setData(newData);
-    };
+    const handleInputChange = useCallback((e, id, field) => {
+        setData(prevData => prevData.map(item => item.id === id ? { ...item, [field]: e.target.value } : item));
+    }, []);
 
-    const handleSave = (id) => {
+    const handleSave = useCallback((id) => {
         const user = data.find(item => item.id === id);
         axios.put(`http://localhost:8080/users_name/${id}`, user)
             .then(response => {
@@ -41,14 +50,14 @@ const Review = () => {
                 console.error('Error updating user:', error);
             });
         setEditingRowId(null);
-    };
+    }, [data]);
 
-    const handlePaperChange = (selectedOptions, id) => {
+    const handlePaperChange = useCallback((selectedOptions, id) => {
         const papers = selectedOptions.map(option => option.value);
-        const newData = data.map(item => item.id === id ? { ...item, paper_id: papers } : item);
-        setData(newData);
+        const updatedData = data.map(item => item.id === id ? { ...item, paper_id: papers } : item);
+        setData(updatedData);
 
-        const user = newData.find(item => item.id === id);
+        const user = updatedData.find(item => item.id === id);
         axios.put(`http://localhost:8080/users_name/${id}`, user)
             .then(response => {
                 console.log('User updated:', response.data);
@@ -56,7 +65,28 @@ const Review = () => {
             .catch(error => {
                 console.error('Error updating user:', error);
             });
-    };
+    }, [data]);
+
+    // Calculate total pages
+    const totalPages = useMemo(() => Math.ceil(data.length / itemsPerPage), [data.length, itemsPerPage]);
+
+    // Pagination: Calculate the data to display on the current page
+    const paginatedData = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return data.slice(startIndex, startIndex + itemsPerPage);
+    }, [data, currentPage, itemsPerPage]);
+
+    // Calculate the page numbers dynamically
+    const pageNumbers = useMemo(() => {
+        return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }, [totalPages]);
+
+    // Debugging outputs
+    console.log('Data Length:', data.length);
+    console.log('Items Per Page:', itemsPerPage);
+    console.log('Total Pages:', totalPages);
+    console.log('Current Page:', currentPage);
+    console.log('Page Numbers:', pageNumbers);
 
     const columns = useMemo(() => [
         { Header: "ID", accessor: "id" },
@@ -109,7 +139,7 @@ const Review = () => {
                 classNamePrefix="select"
             />
         )}
-    ], [editingRowId, data]);
+    ], [editingRowId, handleInputChange, handleSave, handlePaperChange, paperSelection]);
 
     const {
         getTableProps,
@@ -117,10 +147,13 @@ const Review = () => {
         headerGroups,
         rows,
         prepareRow
-    } = useTable({ columns, data });
+    } = useTable({ columns, data: paginatedData });
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
-        <div className='background'>
+        <>
             <div className='review-container'>
                 <table {...getTableProps()}>
                     <thead>
@@ -146,7 +179,17 @@ const Review = () => {
                     </tbody>
                 </table>
             </div>
-        </div>
+            
+            <div className="pagination">
+        <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}> Previous
+        </button>
+        {pageNumbers.map((number) => (
+          <button key={number} onClick={() => setCurrentPage(number)} className={currentPage === number ? 'active' : ''} > {number}
+          </button>
+        ))}
+        <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}> Next</button>
+      </div>
+        </>
     );
 };
 
