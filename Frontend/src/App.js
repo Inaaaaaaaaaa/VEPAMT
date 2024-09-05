@@ -11,7 +11,7 @@ import Conference from './components/Other/Conference/Conference';
 import Notifications from './components/Other/Notifications/Notifications';
 import Settings from './components/Other/Settings/Settings';
 import History from './components/User management/History/History';
-import View from './components/Other/Viewallusers/View';
+import View from './components/User management/Viewallusers/View';
 function App() {
     const notificationsRef = useRef();
 
