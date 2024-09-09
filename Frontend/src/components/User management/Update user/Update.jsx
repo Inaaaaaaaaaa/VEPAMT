@@ -14,18 +14,12 @@ const Update = () => {
     // Fetch data from the backend
     axios.get('http://localhost:8080/users_name')
       .then(response => {
-        console.log('Fetched data:', response.data);  // Debug: Check fetched data
         setData(response.data);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
       });
   }, []);
-
-  // Log the data to check its structure
-  useEffect(() => {
-    console.log('Current data:', data);
-  }, [data]);
 
   // Search bar
   const handleSearchChange = (e) => {
@@ -43,25 +37,6 @@ const Update = () => {
     );
   }, [searchInput, data]);
 
-  // Define table columns
-  const columns = useMemo(() => [
-    { Header: 'ID', accessor: 'id' },
-    { Header: 'First Name', accessor: 'firstName' },
-    { Header: 'Last Name', accessor: 'lastName' },
-    { Header: 'Email', accessor: 'email' },
-    { Header: 'Password', accessor: 'password' },
-    { Header: 'Change Password', accessor: 'changePassword', Cell: ({ row }) => (
-      <ChangePasswordCell
-        id={row.original.id}
-        currentPassword={passwords[row.original.id] || ''}
-        onPasswordChange={handlePasswordChange}
-        onChangePassword={handleChangePassword}
-        isFocused={focusedInputId === row.original.id}  // Check if this field should be focused
-        setFocus={setFocusedInputId}  // Function to set the focus
-      />
-    ) },
-  ], [passwords, focusedInputId]);
-
   // Handle password input changes
   const handlePasswordChange = (id, value) => {
     setPasswords(prevPasswords => ({
@@ -70,14 +45,14 @@ const Update = () => {
     }));
   };
 
-  // Handle password change
+  // Handle password change on the backend
   const handleChangePassword = useCallback((id) => {
     const newPassword = passwords[id];
     if (newPassword) {
       axios.put(`http://localhost:8080/users_name/${id}/password`, { password: newPassword })
         .then(response => {
           console.log('Password updated:', response.data);
-          //Refresh the data or update the state to reflect the change
+          // Optionally refresh the data after the update
           axios.get('http://localhost:8080/users_name')
             .then(response => {
               setData(response.data);
@@ -94,6 +69,25 @@ const Update = () => {
     }
   }, [passwords]);
 
+  // Define table columns
+  const columns = useMemo(() => [
+    { Header: 'ID', accessor: 'id' },
+    { Header: 'First Name', accessor: 'firstName' },
+    { Header: 'Last Name', accessor: 'lastName' },
+    { Header: 'Email', accessor: 'email' },
+    { Header: 'Password', accessor: 'password' },
+    { Header: 'Change Password', accessor: 'changePassword', Cell: ({ row }) => (
+      <ChangePasswordCell
+        id={row.original.id}
+        currentPassword={passwords[row.original.id] || ''}  // Pass the current password from state
+        onPasswordChange={handlePasswordChange}
+        onChangePassword={handleChangePassword}
+        isFocused={focusedInputId === row.original.id}
+        setFocus={setFocusedInputId}
+      />
+    ) },
+  ], [passwords, focusedInputId]);
+
   // Use react-table hooks
   const {
     getTableProps,
@@ -105,7 +99,7 @@ const Update = () => {
 
   return (
     <div className='background'>
-          <div className='update-container'>
+      <div className='update-container'>
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map(headerGroup => (
@@ -119,7 +113,6 @@ const Update = () => {
           <tbody {...getTableBodyProps()}>
             {rows.map(row => {
               prepareRow(row);
-              console.log('Row:', row.original);  // Debug: Log each row data
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map(cell => (

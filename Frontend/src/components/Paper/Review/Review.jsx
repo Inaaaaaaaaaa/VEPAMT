@@ -13,7 +13,7 @@ const Review = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Define the paper selection options
+    // Define the paper selection options (these should come from the backend ideally)
     const paperSelection = useMemo(() => [
         { value: 'Comp702', label: 'Comp702' },
         { value: 'Comp703', label: 'Comp703' },
@@ -40,6 +40,7 @@ const Review = () => {
         setData(prevData => prevData.map(item => item.id === id ? { ...item, [field]: e.target.value } : item));
     }, []);
 
+    // Save the updated data (including papers) to the backend
     const handleSave = useCallback((id) => {
         const user = data.find(item => item.id === id);
         axios.put(`http://localhost:8080/users_name/${id}`, user)
@@ -52,13 +53,15 @@ const Review = () => {
         setEditingRowId(null);
     }, [data]);
 
+    // Handle paper selection and update the backend with the selected papers
     const handlePaperChange = useCallback((selectedOptions, id) => {
-        const papers = selectedOptions.map(option => option.value);
+        const papers = selectedOptions.map(option => option.value); // Get paper ids as an array
         const updatedData = data.map(item => item.id === id ? { ...item, paper_id: papers } : item);
         setData(updatedData);
 
+        // Send updated papers data to the backend
         const user = updatedData.find(item => item.id === id);
-        axios.put(`http://localhost:8080/users_name/${id}`, user)
+        axios.put(`http://localhost:8080/users_name/${id}`, { papers: user.paper_id })  // Send updated paper ids
             .then(response => {
                 console.log('User updated:', response.data);
             })
@@ -80,13 +83,6 @@ const Review = () => {
     const pageNumbers = useMemo(() => {
         return Array.from({ length: totalPages }, (_, i) => i + 1);
     }, [totalPages]);
-
-    // Debugging outputs
-    console.log('Data Length:', data.length);
-    console.log('Items Per Page:', itemsPerPage);
-    console.log('Total Pages:', totalPages);
-    console.log('Current Page:', currentPage);
-    console.log('Page Numbers:', pageNumbers);
 
     const columns = useMemo(() => [
         { Header: "ID", accessor: "id" },

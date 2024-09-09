@@ -1,10 +1,11 @@
-/*Fixes the input box so user does not need to keep clicking on the box to input*/
 import React, { useRef, useEffect } from 'react';
 
 const ChangePasswordCell = ({ id, currentPassword, onPasswordChange, onChangePassword, isFocused, setFocus }) => {
   const inputRef = useRef(null);
 
+  // Log when the component receives focus
   useEffect(() => {
+    console.log(`isFocused: ${isFocused}, inputRef: ${inputRef.current}`);
     if (isFocused && inputRef.current) {
       inputRef.current.focus();
     }
@@ -16,10 +17,15 @@ const ChangePasswordCell = ({ id, currentPassword, onPasswordChange, onChangePas
         ref={inputRef}
         type="password"
         placeholder="New Password"
-        value={currentPassword}
-        onChange={(e) => onPasswordChange(id, e.target.value)}
-        // Set focus to the current input field
-        onFocus={() => setFocus(id)}  
+        value={currentPassword || ''}
+        onChange={(e) => {
+          console.log(`Password changed for ID ${id}:`, e.target.value);
+          onPasswordChange(id, e.target.value);
+        }}
+        onFocus={() => {
+          console.log(`Input focused for ID ${id}`);
+          setFocus(id);
+        }}
       />
       <button onClick={() => onChangePassword(id)}>Change Password</button>
     </div>

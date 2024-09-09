@@ -37,14 +37,14 @@ const Roles = () => {
         const newData = data.map(item => {
             //if item is updated, update this in backend 
             if (item.id === id) {
-                return { ...item, role: updatedRole };
+                return { ...item, roles: updatedRole };
             }
             return item;
         });
         setData(newData);
 
         // Send updated role to the backend and connect to the backend
-        axios.put(`http://localhost:8080/users_name/${id}`, { role: updatedRole })
+        axios.put(`http://localhost:8080/users_name/${id}`, { roles: updatedRole })
             .then(response => {
                 console.log('Role updated:', response.data);
             })
@@ -59,7 +59,7 @@ const Roles = () => {
             item.firstName.toLowerCase().includes(searchInput) ||
             item.lastName.toLowerCase().includes(searchInput) ||
             item.email.toLowerCase().includes(searchInput) ||
-            item.role.toLowerCase().includes(searchInput)
+            item.roles.toLowerCase().includes(searchInput)
         );
     }, [searchInput, data]);
 
