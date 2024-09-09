@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users_name")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -34,10 +35,12 @@ public class User {
     @Column(name = "last_registered", nullable = true)
     private LocalDateTime lastRegistered;
 
-    @Column(name = "submissions_status")
-    private String Submissions_status;
+    // Add submissionsStatus field
+    @Column(name = "submissions_status", nullable = true)
+    private String submissionsStatus;
 
     // Getters and setters
+
     public Integer getId() {
         return id;
     }
@@ -110,13 +113,12 @@ public class User {
         this.lastRegistered = lastRegistered;
     }
 
-    public String getSubmissions_status()
-    {
-        return Submissions_status;
+    // Getter and setter for submissionsStatus
+    public String getSubmissionsStatus() {
+        return submissionsStatus;
     }
 
-    public void setSubmissions_status(String Submissions_status)
-    {
-        this.Submissions_status = Submissions_status;
+    public void setSubmissionsStatus(String submissionsStatus) {
+        this.submissionsStatus = submissionsStatus;
     }
 }
