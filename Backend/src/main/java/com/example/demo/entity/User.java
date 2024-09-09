@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "users_name")
@@ -21,25 +22,30 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String role;
-
-    @Column(name = "paper_id", nullable = false)
-    private String paperId;
+    private String roles;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "last_logged_in", nullable = true)
+    @Column(name = "last_logged_in")
     private LocalDateTime lastLoggedIn;
 
-    @Column(name = "last_registered", nullable = true)
+    @Column(name = "last_registered")
     private LocalDateTime lastRegistered;
 
-    // Add submissionsStatus field
-    @Column(name = "submissions_status", nullable = true)
+    @Column(name = "submissions_status")
     private String submissionsStatus;
 
-    // Getters and setters
+    // Many-to-Many relationship with papers
+    @ManyToMany
+    @JoinTable(
+        name = "user_papers",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "paper_id")
+    )
+    private Set<Paper> papers;
+
+    // Getters and Setters
 
     public Integer getId() {
         return id;
@@ -74,19 +80,11 @@ public class User {
     }
 
     public String getRole() {
-        return role;
+        return roles;
     }
 
     public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getPaperId() {
-        return paperId;
-    }
-
-    public void setPaperId(String paperId) {
-        this.paperId = paperId;
+        this.roles = roles;
     }
 
     public String getPassword() {
@@ -113,12 +111,19 @@ public class User {
         this.lastRegistered = lastRegistered;
     }
 
-    // Getter and setter for submissionsStatus
     public String getSubmissionsStatus() {
         return submissionsStatus;
     }
 
     public void setSubmissionsStatus(String submissionsStatus) {
         this.submissionsStatus = submissionsStatus;
+    }
+
+    public Set<Paper> getPapers() {
+        return papers;
+    }
+
+    public void setPapers(Set<Paper> papers) {
+        this.papers = papers;
     }
 }

@@ -4,6 +4,10 @@ import com.example.demo.ResourceNotFoundException;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+
+import java.util.Optional;
+import java.util.Map; // Correct import
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +40,17 @@ public class UserController {
 
     // Update user role
     @PutMapping("/{id}")
-    public User updateUserRole(@PathVariable Integer id, @RequestBody User updatedUser) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    user.setRole(updatedUser.getRole());
-                    return userRepository.save(user);
-                })
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
+    public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> updatedRole) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = userOptional.get();
+        user.setRole(updatedRole.get("role"));  // Set the updated role from request body
+
+        User savedUser = userRepository.save(user);  // Save the updated user in the database
+        return ResponseEntity.ok(savedUser);
     }
 
     // Update user password

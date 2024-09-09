@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
-    @Query("SELECT u FROM User u WHERE LOWER(u.role) = LOWER(:role)")
-    Optional<User> findByRoleIgnoreCase(@Param("role") String role);
+public interface UserRepository extends JpaRepository<User, Long> {
+    @Query("SELECT u FROM User u WHERE LOWER(u.roles) = LOWER(:roles)")
+    Optional<User> findByRoleIgnoreCase(@Param("roles") String roles);
 }
