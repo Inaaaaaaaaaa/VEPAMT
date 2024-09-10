@@ -15,7 +15,7 @@ public class UserService {
     private UserRepository userRepository;
 
     // Method to update the submission status of a user
-    public boolean updateSubmissionStatus(Integer id, String newStatus) {
+    public boolean updateSubmissionStatus(Long id, String newStatus) { // Long used
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -29,7 +29,7 @@ public class UserService {
 
     // Method to update the password of a user
     @Transactional
-    public boolean updatePassword(Integer id, String newPassword) {
+    public boolean updatePassword(Long id, String newPassword) { // Long used
         return userRepository.findById(id)
             .map(user -> {
                 user.setPassword(newPassword);

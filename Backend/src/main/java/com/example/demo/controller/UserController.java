@@ -6,7 +6,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 
 import java.util.Optional;
-import java.util.Map; // Correct import
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,22 +40,23 @@ public class UserController {
 
     // Update user role
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> updatedRole) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (!userOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        User user = userOptional.get();
-        user.setRole(updatedRole.get("role"));  // Set the updated role from request body
-
-        User savedUser = userRepository.save(user);  // Save the updated user in the database
-        return ResponseEntity.ok(savedUser);
+public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> updatedRole) {
+    Optional<User> userOptional = userRepository.findById(id);
+    if (!userOptional.isPresent()) {
+        return ResponseEntity.notFound().build();
     }
 
+    User user = userOptional.get();
+    user.setRole(updatedRole.get("role")); // Use the "role" key from the request body
+
+    User savedUser = userRepository.save(user);
+    return ResponseEntity.ok(savedUser); // Return the updated user
+}
+
+    
     // Update user password
     @PutMapping("/{id}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable Integer id, @RequestBody UpdatePasswordRequest request) {
+    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequest request) { // Change Integer to Long
         boolean isUpdated = userService.updatePassword(id, request.getPassword());
         if (isUpdated) {
             return ResponseEntity.ok("Password updated successfully");
@@ -66,7 +67,7 @@ public class UserController {
 
     // Update user submission status
     @PutMapping("/{id}/status")
-    public ResponseEntity<String> updateSubmissionStatus(@PathVariable Integer id, @RequestBody UpdateSubmissionStatusRequest request) {
+    public ResponseEntity<String> updateSubmissionStatus(@PathVariable Long id, @RequestBody UpdateSubmissionStatusRequest request) { // Change Integer to Long
         boolean isUpdated = userService.updateSubmissionStatus(id, request.getSubmissionsStatus());
         if (isUpdated) {
             return ResponseEntity.ok("Submission status updated successfully");
@@ -75,4 +76,35 @@ public class UserController {
         }
     }
 
+    // Add the DELETE method to delete a user by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build(); // Return 404 if the user doesn't exist
+        }
+        userRepository.deleteById(id); // Delete the user by ID
+        return ResponseEntity.noContent().build(); // Return 204 No Content after successful deletion
+    }
+    
+     // Add the PUT method to update a user's details
+     @PutMapping("/{id}")
+     public ResponseEntity<User> updateUser(
+             @PathVariable Long id,
+             @RequestBody User updatedUserDetails) {
+         
+         Optional<User> optionalUser = userRepository.findById(id);
+         
+         if (optionalUser.isPresent()) {
+             User existingUser = optionalUser.get();
+             existingUser.setFirstName(updatedUserDetails.getFirstName());
+             existingUser.setLastName(updatedUserDetails.getLastName());
+             existingUser.setEmail(updatedUserDetails.getEmail());
+ 
+             userRepository.save(existingUser); // Save the updated user
+ 
+             return ResponseEntity.ok(existingUser); // Return the updated user
+         } else {
+             return ResponseEntity.notFound().build(); // Return 404 if the user is not found
+         }
+     }
 }

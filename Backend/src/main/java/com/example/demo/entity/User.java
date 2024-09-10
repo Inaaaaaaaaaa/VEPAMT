@@ -10,7 +10,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id; // Changed from Integer to Long
 
     @Column(name = "First_name", nullable = false)
     private String firstName;
@@ -22,7 +22,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String roles;
+    private String roles; // Assuming roles is a comma-separated string
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -47,11 +47,11 @@ public class User {
 
     // Getters and Setters
 
-    public Integer getId() {
+    public Long getId() { // Changed return type to Long
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) { // Changed parameter type to Long
         this.id = id;
     }
 
@@ -79,12 +79,12 @@ public class User {
         this.email = email;
     }
 
-    public String getRole() {
+    public String getRoles() { // Changed getter name to match the field
         return roles;
     }
 
-    public void setRole(String role) {
-        this.roles = roles;
+    public void setRoles(String roles) { // Fixed the setter to assign correctly
+        this.roles = roles; // Correct assignment
     }
 
     public String getPassword() {
