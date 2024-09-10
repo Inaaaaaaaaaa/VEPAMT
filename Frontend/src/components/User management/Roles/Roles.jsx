@@ -7,19 +7,17 @@ import Select from 'react-select';
 const Roles = () => {
     const [searchInput, setSearchInput] = useState('');
     const [data, setData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1); 
-    // Number of users per page
-    const usersPerPage = 14; 
 
-    // Role selection manually defined
     const roleSelection = [
+        //role selection manually 
         { value: 'Author', label: 'Author' },
         { value: 'Reviewer', label: 'Reviewer' },
         { value: 'Organizer', label: 'Organizer' },
+
     ];
 
-    // Fetch data from the backend
     useEffect(() => {
+        // Fetch data from the backend
         axios.get('http://localhost:8080/users_name')
             .then(response => {
                 setData(response.data);
@@ -29,16 +27,15 @@ const Roles = () => {
             });
     }, []);
 
-    // Handle search input change
     const handleSearchChange = (e) => {
         setSearchInput(e.target.value.toLowerCase());
     };
 
-    // Handle role change and update in backend
     const handleRoleChange = (selectedOptions, id) => {
         const roles = selectedOptions.map(option => option.value);
         const updatedRole = roles.join(', ');
         const newData = data.map(item => {
+            //if item is updated, update this in backend 
             if (item.id === id) {
                 return { ...item, roles: updatedRole };
             }
@@ -56,7 +53,6 @@ const Roles = () => {
             });
     };
 
-    // Filter data based on the search input
     const filteredData = useMemo(() => {
         return data.filter(item =>
             item.id.toString().includes(searchInput) ||
@@ -67,25 +63,17 @@ const Roles = () => {
         );
     }, [searchInput, data]);
 
-    // Logic for pagination
-    const pageCount = Math.ceil(filteredData.length / usersPerPage); // Calculate total number of pages
-    const paginatedData = useMemo(() => {
-        const startIndex = (currentPage - 1) * usersPerPage; // Starting index for current page
-        const endIndex = startIndex + usersPerPage; // Ending index for current page
-        return filteredData.slice(startIndex, endIndex); // Slice data to get only current page's data
-    }, [currentPage, filteredData]);
-
-    // List of column names and their database variables
+    //list of column name and their database variables 
     const columns = useMemo(() => [
         { Header: "ID", accessor: "id" },
         { Header: "First name", accessor: "firstName" },
         { Header: "Last name", accessor: "lastName" },
         { Header: "Email", accessor: "email" },
-        { Header: "Role", accessor: "role" },
+        { Header: "Role", accessor: "roles" },
         {
-            // Allow assigning roles via a dropdown box based on the roles in the database
+            //allow assign roles to be a drop downbox based on the roles in the database
             Header: "Assign role",
-            accessor: "roles",
+            accessor: "role",
             Cell: ({ row }) => (
                 <Select
                     options={roleSelection} isMulti
@@ -104,56 +92,35 @@ const Roles = () => {
         headerGroups,
         rows,
         prepareRow
-    } = useTable({ columns, data: paginatedData }); // Pass paginated data to the table
-
-    // Handle moving to the previous page
-    const handlePreviousPage = () => {
-        if (currentPage > 1) setCurrentPage(currentPage - 1);
-    };
-
-    // Handle moving to the next page
-    const handleNextPage = () => {
-        if (currentPage < pageCount) setCurrentPage(currentPage + 1);
-    };
+    } = useTable({ columns, data: filteredData });
 
     return (
-        // Contents within the container to display the tables
-        <div className='roles-container'>
-            <table {...getTableProps()}>
-                <thead>
-                    {headerGroups.map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column => (
-                                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                    {rows.map(row => {
-                        prepareRow(row);
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map(cell => (
-                                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+        //contents within the container to display the tables
+            <div className='roles-container'>
+                <table {...getTableProps()}>
+                    <thead>
+                        {headerGroups.map(headerGroup => (
+                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map(column => (
+                                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
                                 ))}
                             </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-
-            {/* Pagination buttons */}
-            <div className="pagination-roles">
-                <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-                    Previous
-                </button>
-                <span>Page {currentPage} of {pageCount}</span>
-                <button onClick={handleNextPage} disabled={currentPage === pageCount}>
-                    Next
-                </button>
+                        ))}
+                    </thead>
+                    <tbody {...getTableBodyProps()}>
+                        {rows.map(row => {
+                            prepareRow(row);
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {row.cells.map(cell => (
+                                        <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                    ))}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </div>
-        </div>
     );
 };
 
