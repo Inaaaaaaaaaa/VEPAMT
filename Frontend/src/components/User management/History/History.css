@@ -1,55 +1,55 @@
 .update-container {
-    background-color: rgb(255, 255, 255);
-    height: 45.5vw; 
-    max-width: 82%;
-    margin: auto; 
-    border-radius: 10px;
-    overflow-y: auto; 
-    overflow-x: hidden;
-    margin-left: 280px;
-    margin-top: 12px;
-    padding-top: 50px; 
-    position: relative;
+  background-color: rgb(255, 255, 255);
+  height: 45.5vw; 
+  max-width: 82%;
+  margin: auto; 
+  border-radius: 10px;
+  overflow-y: auto; 
+  overflow-x: hidden;
+  margin-left: 280px;
+  margin-top: 12px;
+  padding-top: 50px; 
+  position: relative;
 }
 
 .chart-container {
-    margin-bottom: 12px;
-    margin-left: 20px;
-    width: 90%;
-    height: 310px;
+  margin-bottom: 12px;
+  margin-left: 20px;
+  width: 90%;
+  height: 310px;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    margin-left: 1000px;
-    margin-top: -10px;
-  }
-  
-  .pagination button {
-    margin: 0 5px;
-    padding: 5px 10px;
-    border: none;
-    background-color: #d0e1f8;
-    color: black;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: -20px;
-  }
-  
-  .pagination button.active {
-    background-color: #71b0f4;
-    color: rgb(10, 4, 4);
-  }
-  
-  .pagination button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
-  table {
-    margin-top: auto; /* Push the table to the bottom */
-    width: 100%;
-    border-collapse: collapse;
+.pagination-login {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-left: 1000px;
+  margin-top: -10px;
+}
+
+.pagination-login button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #d0e1f8;
+  color: black;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: -20px;
+}
+
+.pagination-login button.active {
+  background-color: #71b0f4;
+  color: rgb(10, 4, 4);
+}
+
+.pagination-login button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+table {
+  margin-top: 20px; /* Push the table to the bottom */
+  width: 100%;
+  border-collapse: collapse;
 }

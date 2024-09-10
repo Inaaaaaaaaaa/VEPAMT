@@ -6,7 +6,7 @@ const View = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   // Number of users to display per page max
-  const usersPerPage = 8; 
+  const usersPerPage = 24; 
 
   // Fetch user data from the backend when the component mounts
   useEffect(() => {

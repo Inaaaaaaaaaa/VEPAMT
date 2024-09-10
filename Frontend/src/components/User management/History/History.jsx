@@ -145,7 +145,7 @@ const History = () => {
         </div>
 
         {/* Pagination */}
-        <div className='pagination'>
+        <div className='pagination-login'>
           <button onClick={() => previousPage()} disabled={!canPreviousPage}>
             {'<'}
           </button>

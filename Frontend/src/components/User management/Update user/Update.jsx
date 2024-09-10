@@ -98,7 +98,6 @@ const Update = () => {
   } = useTable({ columns, data: filteredData });
 
   return (
-    <div className='background'>
       <div className='update-container'>
         <table {...getTableProps()}>
           <thead>
@@ -124,7 +123,6 @@ const Update = () => {
           </tbody>
         </table>
       </div>
-    </div>
   );
 };
 
