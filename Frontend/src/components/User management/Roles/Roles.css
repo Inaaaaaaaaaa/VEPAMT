@@ -71,3 +71,34 @@ th.name, td.name { width: 20%; }
 th.email, td.email { width: 9%; }
 th.roles, td.roles { width: 0%; }
 
+.pagination-roles {
+    position: fixed; /* Fix pagination to the bottom of the page */
+    bottom: 20px; /* Distance from the bottom of the page */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Ensure perfect centering */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; 
+    margin-left: 100px;
+}
+
+.pagination-roles button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.pagination-roles button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination-roles span {
+    font-size: 16px;
+    margin: 0 10px;
+}
