@@ -13,11 +13,6 @@ const View = () => {
     email: '',
     roles: ''
   });
-  const [editFormData, setEditFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: ''
-  });
   const usersPerPage = 24;
 
   // Fetch users from backend
@@ -52,6 +47,23 @@ const View = () => {
     }
   };
 
+  const handleEditClick = (user) => {
+    // Set editingUser to the user object that was clicked
+    setEditingUser(user);
+  
+    // Fill the form with the existing user data for editing
+    setNewUserFormData({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      roles: user.roles
+    });
+  
+    // Open the modal for editing
+    setIsAddingUser(true);
+  };
+  
+
   const handleDelete = async (userId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
     if (confirmDelete) {
@@ -64,70 +76,54 @@ const View = () => {
     }
   };
 
-  // Handle opening the edit form
-  const handleEditClick = (user) => {
-    setEditingUser(user);
-    setEditFormData({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email
-    });
+  // Function to generate a random ID
+  const generateRandomId = () => {
+    let randomId;
+    do {
+      randomId = Math.floor(Math.random() * 1000000); // Generate a random number between 0 and 999999
+    } while (users.some(user => user.id === randomId)); // Ensure the ID is unique within the existing users
+    return randomId;
   };
 
-  const handleInputChange = (e) => {
-    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
-  };
-
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`http://localhost:8080/users_name/${editingUser.id}`, editFormData);
-      setEditingUser(null); // Exit edit mode after saving
-      const response = await axios.get('http://localhost:8080/users_name');
-      setUsers(response.data);
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingUser(null);
-  };
-
-  // Handle adding a new user
+  // Handle opening the Add User Modal
   const handleAddUserClick = () => {
     setIsAddingUser(true);
   };
 
+  // Handle form input changes for new user
   const handleAddUserInputChange = (e) => {
     setNewUserFormData({ ...newUserFormData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission to add a new user
   const handleAddUserSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/users_name', {
+      const newUser = {
         firstName: newUserFormData.firstName,
         lastName: newUserFormData.lastName,
         email: newUserFormData.email,
         roles: newUserFormData.roles
-      });
-
-      // Refresh users list after adding a new user
-      // Add new user to the current list
-      setUsers([...users, response.data]); 
-      setIsAddingUser(false); // Close the form
+      };
+  
+      const response = await axios.post('http://localhost:8080/users_name', newUser);
+  
+      // Add the new user to the current list of users
+      setUsers([...users, response.data]);
+  
+      // Reset form and close the modal
+      setIsAddingUser(false);
       setNewUserFormData({
         firstName: '',
         lastName: '',
         email: '',
         roles: ''
-      }); 
-      // Reset form fields
+      });
     } catch (error) {
       console.error('Error adding user:', error);
     }
   };
+  
 
   const handleCancelAddUser = () => {
     setIsAddingUser(false);
@@ -145,7 +141,7 @@ const View = () => {
 
       {/* Add User Button */}
       <button className="add-user-button" onClick={handleAddUserClick}>
-        Add users +
+        Add User +
       </button>
 
       {/* Add User Modal */}
@@ -187,9 +183,7 @@ const View = () => {
                 required
               />
               <button type="submit">Add User</button>
-              <button type="button" onClick={handleCancelAddUser}>
-                Cancel
-              </button>
+              <button type="button" onClick={handleCancelAddUser}>Cancel</button>
             </form>
           </div>
         </div>
@@ -224,43 +218,6 @@ const View = () => {
           </div>
         ))}
       </div>
-
-      {/* Edit Form */}
-      {editingUser && (
-        <div className="edit-form-container">
-          <h2>Edit User</h2>
-          <form onSubmit={handleFormSubmit}>
-            <label>First Name:</label>
-            <input
-              type="text"
-              name="firstName"
-              value={editFormData.firstName}
-              onChange={handleInputChange}
-              required
-            />
-            <label>Last Name:</label>
-            <input
-              type="text"
-              name="lastName"
-              value={editFormData.lastName}
-              onChange={handleInputChange}
-              required
-            />
-            <label>Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={editFormData.email}
-              onChange={handleInputChange}
-              required
-            />
-            <button type="submit">Save</button>
-            <button type="button" onClick={handleCancelEdit}>
-              Cancel
-            </button>
-          </form>
-        </div>
-      )}
 
       {/* Pagination */}
       <div className="pagination-buttons">
