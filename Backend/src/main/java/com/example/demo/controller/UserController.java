@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -32,15 +33,9 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    // Create a new user
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
-    }
-
     // Update user role
     @PutMapping("/{id}")
-public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> updatedRole) {
+    public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> updatedRole) {
     Optional<User> userOptional = userRepository.findById(id);
     if (!userOptional.isPresent()) {
         return ResponseEntity.notFound().build();
@@ -62,6 +57,28 @@ public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody M
             return ResponseEntity.ok("Password updated successfully");
         } else {
             return ResponseEntity.status(500).body("Error updating password");
+        }
+    }
+
+    @PostMapping("/users_name")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        try {
+            // Handle default values
+            if (user.getLastLoggedIn() == null) {
+                user.setLastLoggedIn(LocalDateTime.now());
+            }
+            if (user.getLastRegistered() == null) {
+                user.setLastRegistered(LocalDateTime.now());
+            }
+            if (user.getSubmissionsStatus() == null) {
+                user.setSubmissionsStatus("Pending");
+            }
+    
+            User savedUser = userRepository.save(user);
+            return ResponseEntity.ok(savedUser);
+        } catch (Exception e) {
+            e.printStackTrace();  // Log the error details for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
