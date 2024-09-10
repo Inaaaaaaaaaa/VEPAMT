@@ -47,7 +47,7 @@ public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody M
     }
 
     User user = userOptional.get();
-    user.setRole(updatedRole.get("role")); // Use the "role" key from the request body
+    user.setRoles(updatedRole.get("role")); // Use the "role" key from the request body
 
     User savedUser = userRepository.save(user);
     return ResponseEntity.ok(savedUser); // Return the updated user
@@ -85,26 +85,4 @@ public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody M
         userRepository.deleteById(id); // Delete the user by ID
         return ResponseEntity.noContent().build(); // Return 204 No Content after successful deletion
     }
-    
-     // Add the PUT method to update a user's details
-     @PutMapping("/{id}")
-     public ResponseEntity<User> updateUser(
-             @PathVariable Long id,
-             @RequestBody User updatedUserDetails) {
-         
-         Optional<User> optionalUser = userRepository.findById(id);
-         
-         if (optionalUser.isPresent()) {
-             User existingUser = optionalUser.get();
-             existingUser.setFirstName(updatedUserDetails.getFirstName());
-             existingUser.setLastName(updatedUserDetails.getLastName());
-             existingUser.setEmail(updatedUserDetails.getEmail());
- 
-             userRepository.save(existingUser); // Save the updated user
- 
-             return ResponseEntity.ok(existingUser); // Return the updated user
-         } else {
-             return ResponseEntity.notFound().build(); // Return 404 if the user is not found
-         }
-     }
 }
