@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.ResourceNotFoundException;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -36,22 +35,21 @@ public class UserController {
     // Update user role
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> updatedRole) {
-    Optional<User> userOptional = userRepository.findById(id);
-    if (!userOptional.isPresent()) {
-        return ResponseEntity.notFound().build();
+        Optional<User> userOptional = userRepository.findById(id);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = userOptional.get();
+        user.setRoles(updatedRole.get("role")); // Use the "role" key from the request body
+
+        User savedUser = userRepository.save(user);
+        return ResponseEntity.ok(savedUser); // Return the updated user
     }
 
-    User user = userOptional.get();
-    user.setRoles(updatedRole.get("role")); // Use the "role" key from the request body
-
-    User savedUser = userRepository.save(user);
-    return ResponseEntity.ok(savedUser); // Return the updated user
-}
-
-    
     // Update user password
     @PutMapping("/{id}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequest request) { // Change Integer to Long
+    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequest request) { 
         boolean isUpdated = userService.updatePassword(id, request.getPassword());
         if (isUpdated) {
             return ResponseEntity.ok("Password updated successfully");
@@ -60,7 +58,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/users_name")
+    // Create a new user
+    @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
             // Handle default values
@@ -73,7 +72,7 @@ public class UserController {
             if (user.getSubmissionsStatus() == null) {
                 user.setSubmissionsStatus("Pending");
             }
-    
+
             User savedUser = userRepository.save(user);
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {
@@ -84,7 +83,7 @@ public class UserController {
 
     // Update user submission status
     @PutMapping("/{id}/status")
-    public ResponseEntity<String> updateSubmissionStatus(@PathVariable Long id, @RequestBody UpdateSubmissionStatusRequest request) { // Change Integer to Long
+    public ResponseEntity<String> updateSubmissionStatus(@PathVariable Long id, @RequestBody UpdateSubmissionStatusRequest request) {
         boolean isUpdated = userService.updateSubmissionStatus(id, request.getSubmissionsStatus());
         if (isUpdated) {
             return ResponseEntity.ok("Submission status updated successfully");
@@ -93,13 +92,14 @@ public class UserController {
         }
     }
 
-    // Add the DELETE method to delete a user by ID
+    // Delete a user by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (!userRepository.existsById(id)) {
-            return ResponseEntity.notFound().build(); // Return 404 if the user doesn't exist
+            // Return 404 if the user doesn't exist
+            return ResponseEntity.notFound().build(); 
         }
-        userRepository.deleteById(id); // Delete the user by ID
-        return ResponseEntity.noContent().build(); // Return 204 No Content after successful deletion
+        userRepository.deleteById(id); 
+        return ResponseEntity.noContent().build(); 
     }
 }

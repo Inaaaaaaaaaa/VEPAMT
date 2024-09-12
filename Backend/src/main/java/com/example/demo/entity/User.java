@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "users_name")
@@ -36,14 +35,7 @@ public class User {
     @Column(name = "submissions_status")
     private String submissionsStatus;
 
-    // Many-to-Many relationship with papers
-    @ManyToMany
-    @JoinTable(
-        name = "user_papers",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "paper_id")
-    )
-    private Set<Paper> papers;
+    // Removed Many-to-Many relationship with papers
 
     // Getters and Setters
 
@@ -117,13 +109,5 @@ public class User {
 
     public void setSubmissionsStatus(String submissionsStatus) {
         this.submissionsStatus = submissionsStatus;
-    }
-
-    public Set<Paper> getPapers() {
-        return papers;
-    }
-
-    public void setPapers(Set<Paper> papers) {
-        this.papers = papers;
     }
 }
