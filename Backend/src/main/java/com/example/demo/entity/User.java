@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "users_name")
@@ -9,7 +10,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Changed from Integer to Long
+    private Long id;
 
     @Column(name = "First_name", nullable = false)
     private String firstName;
@@ -21,7 +22,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String roles; // Assuming roles is a comma-separated string
+    private String roles; 
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -35,7 +36,14 @@ public class User {
     @Column(name = "submissions_status")
     private String submissionsStatus;
 
-    // Removed Many-to-Many relationship with papers
+    @ManyToMany
+    @JoinTable(
+        name = "user_papers", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "paper_id")
+    )
+    private Set<Paper> papers;  // Set of papers a user is associated with
+
 
     // Getters and Setters
 
