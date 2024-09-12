@@ -1,192 +1,192 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Review.css';
-import { useTable } from 'react-table';
-import 'react-datepicker/dist/react-datepicker.css';
-import Select from 'react-select';
 import axios from 'axios';
+import _ from 'lodash';
 
 const Review = () => {
-    const [editingRowId, setEditingRowId] = useState(null);
-    const [data, setData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10; 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
+  const [users, setUsers] = useState([]); // For holding the list of users from users_name
+  const [selectedPaper, setSelectedPaper] = useState(null); // For holding the selected paper
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('date');
+  const [filteredPapers, setFilteredPapers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const [showForm, setShowForm] = useState(false); // To control visibility of the modal form
+  const [selectedReviewer, setSelectedReviewer] = useState(null); // To hold the selected reviewer during editing
 
-    // Define the paper selection options (these should come from the backend ideally)
-    const paperSelection = useMemo(() => [
-        { value: 'Comp702', label: 'Comp702' },
-        { value: 'Comp703', label: 'Comp703' },
-        { value: 'Comp603', label: 'Comp603' }
-    ], []);
+  useEffect(() => {
+    // Fetch papers data
+    axios
+      .get('http://localhost:8080/users_name')
+      .then((response) => {
+        setData(response.data);
+        setFilteredPapers(response.data); // Initialize with fetched data
+      })
+      .catch((error) => {
+        console.error('Error fetching papers data:', error);
+      });
 
-    // Fetch data from the backend
-    useEffect(() => {
-        setLoading(true);
-        axios.get('http://localhost:8080/users_name')
-            .then(response => {
-                setData(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                setError('Failed to fetch data. Please try again later.');
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, []);
+    // Fetch users data
+    axios
+      .get('http://localhost:8080/users_name') // Adjust to the correct endpoint if needed
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching users data:', error);
+      });
+  }, []);
 
-    const handleInputChange = useCallback((e, id, field) => {
-        setData(prevData => prevData.map(item => item.id === id ? { ...item, [field]: e.target.value } : item));
-    }, []);
+  useEffect(() => {
+    filterAndSortPapers();
+  }, [searchTerm, sortBy, data]);
 
-    // Save the updated data (including papers) to the backend
-    const handleSave = useCallback((id) => {
-        const user = data.find(item => item.id === id);
-        axios.put(`http://localhost:8080/users_name/${id}`, user)
-            .then(response => {
-                console.log('User updated:', response.data);
-            })
-            .catch(error => {
-                console.error('Error updating user:', error);
-            });
-        setEditingRowId(null);
-    }, [data]);
+  const filterAndSortPapers = () => {
+    let filtered = data.filter((paper) => {
+      const title = paper.title ? paper.title.toLowerCase() : '';
+      const firstName = paper.firstName ? paper.firstName.toLowerCase() : '';
+      const lastName = paper.lastName ? paper.lastName.toLowerCase() : '';
+      const searchTermLower = searchTerm.toLowerCase();
 
-    // Handle paper selection and update the backend with the selected papers
-    const handlePaperChange = useCallback((selectedOptions, id) => {
-        const papers = selectedOptions.map(option => option.value); // Get paper ids as an array
-        const updatedData = data.map(item => item.id === id ? { ...item, paper_id: papers } : item);
-        setData(updatedData);
+      return (
+        title.includes(searchTermLower) ||
+        firstName.includes(searchTermLower) ||
+        lastName.includes(searchTermLower)
+      );
+    });
 
-        // Send updated papers data to the backend
-        const user = updatedData.find(item => item.id === id);
-        axios.put(`http://localhost:8080/users_name/${id}`, { papers: user.paper_id })  // Send updated paper ids
-            .then(response => {
-                console.log('User updated:', response.data);
-            })
-            .catch(error => {
-                console.error('Error updating user:', error);
-            });
-    }, [data]);
+    filtered = _.sortBy(filtered, sortBy);
+    setFilteredPapers(filtered);
+  };
 
-    // Calculate total pages
-    const totalPages = useMemo(() => Math.ceil(data.length / itemsPerPage), [data.length, itemsPerPage]);
+  // Show the white form when view is clicked
+  const handleView = (paper) => {
+    setSelectedPaper(paper);
+    setShowForm(true); 
+  };
 
-    // Pagination: Calculate the data to display on the current page
-    const paginatedData = useMemo(() => {
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        return data.slice(startIndex, startIndex + itemsPerPage);
-    }, [data, currentPage, itemsPerPage]);
+  const handleAddReviewer = (reviewerId) => {
+    setSelectedReviewer(reviewerId); 
+  };
 
-    // Calculate the page numbers dynamically
-    const pageNumbers = useMemo(() => {
-        return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }, [totalPages]);
+  const handleSaveReviewer = () => {
+    if (!selectedReviewer || !selectedPaper) return;
 
-    const columns = useMemo(() => [
-        { Header: "ID", accessor: "id" },
-        { Header: "First name", accessor: "firstName", Cell: ({ row }) => (
-            editingRowId === row.original.id ? (
-                <input
-                    type="text"
-                    value={row.original.firstName || ''}
-                    onChange={(e) => handleInputChange(e, row.original.id, 'firstName')}
-                    onBlur={() => handleSave(row.original.id)}
-                    autoFocus
-                />
-            ) : (
-                <span onClick={() => setEditingRowId(row.original.id)}>{row.original.firstName}</span>
-            )
-        )},
-        { Header: "Last name", accessor: "lastName", Cell: ({ row }) => (
-            editingRowId === row.original.id ? (
-                <input
-                    type="text"
-                    value={row.original.lastName || ''}
-                    onChange={(e) => handleInputChange(e, row.original.id, 'lastName')}
-                    onBlur={() => handleSave(row.original.id)}
-                    autoFocus
-                />
-            ) : (
-                <span onClick={() => setEditingRowId(row.original.id)}>{row.original.lastName}</span>
-            )
-        )},
-        { Header: "Email", accessor: "email", Cell: ({ row }) => (
-            editingRowId === row.original.id ? (
-                <input
-                    type="text"
-                    value={row.original.email || ''}
-                    onChange={(e) => handleInputChange(e, row.original.id, 'email')}
-                    onBlur={() => handleSave(row.original.id)}
-                    autoFocus
-                />
-            ) : (
-                <span onClick={() => setEditingRowId(row.original.id)}>{row.original.email}</span>
-            )
-        )},
-        { Header: "Paper ID", accessor: "paper_id", Cell: ({ row }) => (
-            <Select
-                options={paperSelection}
-                isMulti
-                value={paperSelection.filter(option => Array.isArray(row.original.paper_id) && row.original.paper_id.includes(option.value))}
-                onChange={(selectedOptions) => handlePaperChange(selectedOptions, row.original.id)}
-                className="basic-multi-select"
-                classNamePrefix="select"
-            />
-        )}
-    ], [editingRowId, handleInputChange, handleSave, handlePaperChange, paperSelection]);
+    // Logic to save the reviewer for the selected paper
+    axios.put(`http://localhost:8080/users_name/${selectedPaper.id}/reviewer`, { reviewer: selectedReviewer })
+      .then((response) => {
+        console.log('Reviewer added:', response.data);
+        setShowForm(false); // Close the form after saving
+        setSelectedPaper(null); // Reset the selected paper
+      })
+      .catch((error) => {
+        console.error('Error adding reviewer:', error);
+      });
+  };
 
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow
-    } = useTable({ columns, data: paginatedData });
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPapers.slice(indexOfFirstItem, indexOfLastItem);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+  const totalPages = Math.ceil(filteredPapers.length / itemsPerPage);
+  const pageNumbers = [...Array(totalPages).keys()].map((i) => i + 1);
 
-    return (
-        <>
-            <div className='review-container'>
-                <table {...getTableProps()}>
-                    <thead>
-                        {headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map(column => (
-                                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                        {rows.map(row => {
-                            prepareRow(row);
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {row.cells.map(cell => (
-                                        <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+  const handleCloseModal = () => {
+    setShowForm(false);
+    setSelectedPaper(null);
+  };
+
+  return (
+    <div className="review-container">
+      <h1>Paper Reviews</h1>
+
+      {/* Sorting dropdown */}
+      <div id="filter-container">
+        <select id="sort-by" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="title">Sort by Paper name</option>
+          <option value="status">Sort by status</option>
+
+        </select>
+      </div>
+
+      <div id="review-cards-container">
+        {currentItems.map((paper) => (
+          <div key={paper.id} className="paper-card">
+            <div className="paper-title">{paper.paperId || 'No Paper ID'}</div>
+            <div className="paper-reviwer">
+              {paper.firstName} {paper.lastName}
             </div>
-            
-            <div className="pagination">
-        <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}> Previous
+            <div className="paper-status">Status: {paper.submissions_status}</div>
+
+            <div className="paper-actions">
+              {/* View button */}
+              <button onClick={() => handleView(paper)}>View</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="pagination">
+        <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+          Previous
         </button>
         {pageNumbers.map((number) => (
-          <button key={number} onClick={() => setCurrentPage(number)} className={currentPage === number ? 'active' : ''} > {number}
+          <button
+            key={number}
+            onClick={() => setCurrentPage(number)}
+            className={currentPage === number ? 'active' : ''}
+          >
+            {number}
           </button>
         ))}
-        <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}> Next</button>
+        <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+          Next
+        </button>
       </div>
-        </>
-    );
+
+      {/* Modal-like white form */}
+      {showForm && selectedPaper && (
+        <div className="modal-overlay" onClick={handleCloseModal}>
+          <div className="white-form" onClick={(e) => e.stopPropagation()}>
+            <h2>Paper Details</h2>
+            <p><strong>Paper ID:</strong> {selectedPaper.paperId}</p>
+            <p><strong>Reviewer(s):</strong> {selectedPaper.firstName} {selectedPaper.lastName}</p>
+
+            {/* Table displaying users when user clicks on view button */}
+            <table className="user-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Select</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td>
+                      <button onClick={() => handleAddReviewer(user.id)}>Select</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div className="form-actions">
+              <button onClick={handleSaveReviewer}>Save</button>
+              <button onClick={handleCloseModal}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default Review;
