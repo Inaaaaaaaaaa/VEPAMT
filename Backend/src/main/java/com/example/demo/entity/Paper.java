@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "papers") // Assuming your table for papers is named 'papers'
+@Table(name = "papers") 
 public class Paper {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Unique identifier for each paper
+    private Long id; 
+
+    // Fixed the typo here
+    private Long reviewerId; 
 
     @Column(name = "paper_code", nullable = false, unique = true)
     private String paperCode;
@@ -42,5 +45,13 @@ public class Paper {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public Long getReviewerId() { 
+        return reviewerId;
+    }
+
+    public void setReviewer(Long reviewerId) {
+        this.reviewerId = reviewerId;
     }
 }

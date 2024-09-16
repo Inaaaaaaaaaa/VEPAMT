@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Paper;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import com.example.demo.service.PaperService; 
+import com.example.demo.dto.ReviewerDto;
 
 import java.util.Optional;
 import java.util.Map;
@@ -25,6 +28,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PaperService paperService; 
+
 
     // Get all users
     @GetMapping
@@ -101,5 +108,32 @@ public class UserController {
         }
         userRepository.deleteById(id); 
         return ResponseEntity.noContent().build(); 
+    }
+
+    @PutMapping("/{paperId}/reviewer")
+    public ResponseEntity<?> addReviewer(@PathVariable Long paperId, @RequestBody ReviewerDto reviewerDto) {
+        try {
+            // Step 1: Find the paper by ID
+            Optional<Paper> optionalPaper = paperService.findPaperById(paperId);
+            
+            if (!optionalPaper.isPresent()) {
+                // Step 2: If paper is not found, return a 404 response
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paper not found");
+            }
+
+            // Step 3: Get the paper and update its reviewer information
+            Paper paper = optionalPaper.get();
+            // Assuming Paper class has a method to set reviewers or add to a list of reviewers
+            paper.setReviewer(reviewerDto.getReviewerId()); // Adjust this based on your data model
+            
+            // Step 4: Save the updated paper
+            Paper updatedPaper = paperService.savePaper(paper);
+
+            // Step 5: Return the updated paper in the response
+            return ResponseEntity.ok(updatedPaper);
+        } catch (Exception e) {
+            // Step 6: Handle any exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the reviewer");
+        }
     }
 }
