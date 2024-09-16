@@ -112,28 +112,20 @@ public class UserController {
 
     @PutMapping("/{paperId}/reviewer")
     public ResponseEntity<?> addReviewer(@PathVariable Long paperId, @RequestBody ReviewerDto reviewerDto) {
-        try {
-            // Step 1: Find the paper by ID
-            Optional<Paper> optionalPaper = paperService.findPaperById(paperId);
-            
-            if (!optionalPaper.isPresent()) {
-                // Step 2: If paper is not found, return a 404 response
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paper not found");
-            }
-
-            // Step 3: Get the paper and update its reviewer information
-            Paper paper = optionalPaper.get();
-            // Assuming Paper class has a method to set reviewers or add to a list of reviewers
-            paper.setReviewer(reviewerDto.getReviewerId()); // Adjust this based on your data model
-            
-            // Step 4: Save the updated paper
-            Paper updatedPaper = paperService.savePaper(paper);
-
-            // Step 5: Return the updated paper in the response
-            return ResponseEntity.ok(updatedPaper);
-        } catch (Exception e) {
-            // Step 6: Handle any exceptions
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the reviewer");
+        Optional<Paper> paperOptional = paperService.findPaperById(paperId);
+        if (paperOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paper not found");
         }
+    
+        Paper paper = paperOptional.get();
+        
+        // Add the reviewer to the paper's reviewer list
+        paper.setReviewer(reviewerDto.getReviewerId()); 
+        
+        Paper updatedPaper = paperService.savePaper(paper);
+    
+        // Return the updated paper
+        return ResponseEntity.ok(updatedPaper);
     }
+    
 }
