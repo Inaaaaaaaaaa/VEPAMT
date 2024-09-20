@@ -50,18 +50,21 @@ const View = () => {
   // Handle Edit button click
   const handleEditClick = (user) => {
     setEditingUser(user); // Set the user to be edited
-
+  
     // Pre-fill the form with the existing user data
     setNewUserFormData({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      roles: user.roles
+      roles: user.roles,
+      password: '' 
     });
-
+    
+  
     // Open the modal
     setIsAddingUser(true);
   };
+  
 
   // Handle Delete button click
   const handleDelete = async (userId) => {
@@ -102,23 +105,29 @@ const View = () => {
         lastName: newUserFormData.lastName,
         email: newUserFormData.email,
         roles: newUserFormData.roles,
-        password: 'defaultPassword123', // Assign a default password
-        lastLoggedIn: null, // Set to null or leave out if handled by the backend
-        lastRegistered: new Date().toISOString(), // Automatically assign current date for registration
-        submissionsStatus: null // Set to null if it's not needed
       };
   
+      // Check if we are editing a user
       if (editingUser) {
-        // PUT request for editing existing user
-        const response = await axios.put(`http://localhost:8080/users_name/${editingUser.id}`, newUser);
-        setUsers(users.map(u => (u.id === editingUser.id ? response.data : u)));
-      } else {
+        console.log("Submitting updated user:", newUser);  
+        try {
+          const response = await axios.put(`http://localhost:8080/users_name/${editingUser.id}`, newUser);
+          setUsers(users.map(u => (u.id === editingUser.id ? response.data : u)));
+        } catch (error) {
+          console.error('Error updating user:', error.response ? error.response.data : error.message);
+        }
+      }
+      else {
         // POST request for adding a new user
+        newUser.password = 'defaultPassword123'; // Assign a default password for new users
+        newUser.lastRegistered = new Date().toISOString(); // Automatically assign registration date
+  
         const response = await axios.post('http://localhost:8080/users_name', newUser);
+        // Add the new user to the UI
         setUsers([...users, response.data]);
       }
   
-      // Reset form and close modal
+      // Reset the form and close the modal
       setIsAddingUser(false);
       setNewUserFormData({
         firstName: '',
@@ -128,10 +137,10 @@ const View = () => {
       });
       setEditingUser(null);
     } catch (error) {
-      console.error('Error adding/editing user:', error);
+      console.error('Error adding/editing user:', error.response ? error.response.data : error.message);
     }
-  };  
-
+  };
+  
   // Cancel adding/editing user
   const handleCancelAddUser = () => {
     setIsAddingUser(false);
