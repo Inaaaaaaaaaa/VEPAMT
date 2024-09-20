@@ -32,36 +32,48 @@ public class UserController {
     @Autowired
     private PaperService paperService; 
 
-
     // Get all users
     @GetMapping
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
-    // Update user role
+    // Get user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    // Update user (including role, email, etc.)
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> updatedRole) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
         Optional<User> userOptional = userRepository.findById(id);
         if (!userOptional.isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
-        User user = userOptional.get();
-        user.setRoles(updatedRole.get("role")); // Use the "role" key from the request body
+        User existingUser = userOptional.get();
+        // Update user details
+        existingUser.setFirstName(updatedUser.getFirstName());
+        existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setRoles(updatedUser.getRoles());
 
-        User savedUser = userRepository.save(user);
-        return ResponseEntity.ok(savedUser); // Return the updated user
+        // Save the updated user
+        User savedUser = userRepository.save(existingUser);
+        return ResponseEntity.ok(savedUser);
     }
 
     // Update user password
     @PutMapping("/{id}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequest request) { 
+    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody UpdatePasswordRequest request) {
         boolean isUpdated = userService.updatePassword(id, request.getPassword());
         if (isUpdated) {
             return ResponseEntity.ok("Password updated successfully");
         } else {
-            return ResponseEntity.status(500).body("Error updating password");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating password");
         }
     }
 
@@ -103,13 +115,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (!userRepository.existsById(id)) {
-            // Return 404 if the user doesn't exist
-            return ResponseEntity.notFound().build(); 
+            return ResponseEntity.notFound().build();  // Return 404 if the user doesn't exist
         }
         userRepository.deleteById(id); 
-        return ResponseEntity.noContent().build(); 
+        return ResponseEntity.noContent().build();  // Return 204 on successful deletion
     }
 
+    // Add a reviewer to a paper
     @PutMapping("/{paperId}/reviewer")
     public ResponseEntity<?> addReviewer(@PathVariable Long paperId, @RequestBody ReviewerDto reviewerDto) {
         Optional<Paper> paperOptional = paperService.findPaperById(paperId);
@@ -118,14 +130,10 @@ public class UserController {
         }
     
         Paper paper = paperOptional.get();
-        
-        // Add the reviewer to the paper's reviewer list
+        // Set reviewer ID (assuming the Paper entity has a field for reviewerId)
         paper.setReviewer(reviewerDto.getReviewerId()); 
         
         Paper updatedPaper = paperService.savePaper(paper);
-    
-        // Return the updated paper
-        return ResponseEntity.ok(updatedPaper);
+        return ResponseEntity.ok(updatedPaper);  // Return updated paper
     }
-    
 }
