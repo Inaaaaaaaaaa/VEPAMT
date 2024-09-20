@@ -5,8 +5,8 @@ import axios from 'axios';
 const View = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [editingUser, setEditingUser] = useState(null);
-  const [isAddingUser, setIsAddingUser] = useState(false); // For tracking if we're adding a new user
+  const [isAddingUser, setIsAddingUser] = useState(false);
+  const [editingUser, setEditingUser] = useState(null); // Track if a user is being edited
   const [newUserFormData, setNewUserFormData] = useState({
     firstName: '',
     lastName: '',
@@ -47,23 +47,23 @@ const View = () => {
     }
   };
 
+  // Handle Edit button click
   const handleEditClick = (user) => {
-    // Set editingUser to the user object that was clicked
-    setEditingUser(user);
-  
-    // Fill the form with the existing user data for editing
+    setEditingUser(user); // Set the user to be edited
+
+    // Pre-fill the form with the existing user data
     setNewUserFormData({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       roles: user.roles
     });
-  
-    // Open the modal for editing
+
+    // Open the modal
     setIsAddingUser(true);
   };
-  
 
+  // Handle Delete button click
   const handleDelete = async (userId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
     if (confirmDelete) {
@@ -76,26 +76,24 @@ const View = () => {
     }
   };
 
-  // Function to generate a random ID
-  const generateRandomId = () => {
-    let randomId;
-    do {
-      randomId = Math.floor(Math.random() * 1000000); // Generate a random number between 0 and 999999
-    } while (users.some(user => user.id === randomId)); // Ensure the ID is unique within the existing users
-    return randomId;
-  };
-
   // Handle opening the Add User Modal
   const handleAddUserClick = () => {
+    setEditingUser(null); // Reset editingUser when adding a new user
+    setNewUserFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      roles: ''
+    });
     setIsAddingUser(true);
   };
 
-  // Handle form input changes for new user
+  // Handle form input changes for adding/editing a user
   const handleAddUserInputChange = (e) => {
     setNewUserFormData({ ...newUserFormData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission to add a new user
+  // Handle form submission to add or edit a user
   const handleAddUserSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -103,15 +101,24 @@ const View = () => {
         firstName: newUserFormData.firstName,
         lastName: newUserFormData.lastName,
         email: newUserFormData.email,
-        roles: newUserFormData.roles
+        roles: newUserFormData.roles,
+        password: 'defaultPassword123', // Assign a default password
+        lastLoggedIn: null, // Set to null or leave out if handled by the backend
+        lastRegistered: new Date().toISOString(), // Automatically assign current date for registration
+        submissionsStatus: null // Set to null if it's not needed
       };
   
-      const response = await axios.post('http://localhost:8080/users_name', newUser);
+      if (editingUser) {
+        // PUT request for editing existing user
+        const response = await axios.put(`http://localhost:8080/users_name/${editingUser.id}`, newUser);
+        setUsers(users.map(u => (u.id === editingUser.id ? response.data : u)));
+      } else {
+        // POST request for adding a new user
+        const response = await axios.post('http://localhost:8080/users_name', newUser);
+        setUsers([...users, response.data]);
+      }
   
-      // Add the new user to the current list of users
-      setUsers([...users, response.data]);
-  
-      // Reset form and close the modal
+      // Reset form and close modal
       setIsAddingUser(false);
       setNewUserFormData({
         firstName: '',
@@ -119,12 +126,13 @@ const View = () => {
         email: '',
         roles: ''
       });
+      setEditingUser(null);
     } catch (error) {
-      console.error('Error adding user:', error);
+      console.error('Error adding/editing user:', error);
     }
-  };
-  
+  };  
 
+  // Cancel adding/editing user
   const handleCancelAddUser = () => {
     setIsAddingUser(false);
     setNewUserFormData({
@@ -133,6 +141,7 @@ const View = () => {
       email: '',
       roles: ''
     });
+    setEditingUser(null);
   };
 
   return (
@@ -144,11 +153,11 @@ const View = () => {
         Add User +
       </button>
 
-      {/* Add User Modal */}
+      {/* Add/Edit User Modal */}
       {isAddingUser && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Add New User</h2>
+            <h2>{editingUser ? 'Edit User' : 'Add User'}</h2>
             <form onSubmit={handleAddUserSubmit}>
               <label>First Name:</label>
               <input
@@ -182,13 +191,14 @@ const View = () => {
                 onChange={handleAddUserInputChange}
                 required
               />
-              <button type="submit">Add User</button>
+              <button type="submit">{editingUser ? 'Save Changes' : 'Add User'}</button>
               <button type="button" onClick={handleCancelAddUser}>Cancel</button>
             </form>
           </div>
         </div>
       )}
 
+      {/* User List */}
       <div className="user-list">
         {currentUsers.map((user, index) => (
           <div className="user-card" key={user.id || index}>
@@ -202,18 +212,8 @@ const View = () => {
 
             {/* Edit and Delete buttons */}
             <div className="user-actions">
-              <button
-                className="edit-button"
-                onClick={() => handleEditClick(user)}
-              >
-                Edit
-              </button>
-              <button
-                className="delete-button"
-                onClick={() => handleDelete(user.id)}
-              >
-                Delete
-              </button>
+              <button className="edit-button" onClick={() => handleEditClick(user)}>Edit</button>
+              <button className="delete-button" onClick={() => handleDelete(user.id)}>Delete</button>
             </div>
           </div>
         ))}
