@@ -31,27 +31,26 @@ const Roles = () => {
         setSearchInput(e.target.value.toLowerCase());
     };
 
-    const handleRoleChange = (selectedOptions, id) => {
-        const roles = selectedOptions.map(option => option.value);
-        const updatedRole = roles.join(', ');
-        const newData = data.map(item => {
-            //if item is updated, update this in backend 
-            if (item.id === id) {
-                return { ...item, roles: updatedRole };
-            }
-            return item;
-        });
-        setData(newData);
-
-        // Send updated role to the backend and connect to the backend
-        axios.put(`http://localhost:8080/users_name/${id}`, { roles: updatedRole })
+        const handleRoleChange = (roles, selectedOptions) => {
+        const selectedRoles = selectedOptions.map(option => option.value); // Extract the selected role values
+    
+        // Pass the roles field (from MySQL) instead of roleId in the URL
+        axios.put(`http://localhost:8080/roles/${roles}`, { roles: selectedRoles })
             .then(response => {
-                console.log('Role updated:', response.data);
+                console.log('Role updated successfully', response.data);
             })
             .catch(error => {
-                console.error('Error updating role:', error);
+                if (error.response) {
+                    console.error('Server responded with an error:', error.response.data);
+                    console.error('Status code:', error.response.status);
+                } else if (error.request) {
+                    console.error('No response received:', error.request);
+                } else {
+                    console.error('Error setting up the request:', error.message);
+                }
             });
     };
+    
 
     const filteredData = useMemo(() => {
         return data.filter(item =>
@@ -76,11 +75,12 @@ const Roles = () => {
             accessor: "role",
             Cell: ({ row }) => (
                 <Select
-                    options={roleSelection} isMulti
-                    value={roleSelection.filter(option => row.original.role && row.original.role.split(', ').includes(option.value))}
-                    onChange={(selectedOptions) => handleRoleChange(selectedOptions, row.original.id)}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
+                options={roleSelection}
+                isMulti
+                value={roleSelection.filter(option => row.original.roles && row.original.roles.split(', ').includes(option.value))}
+                onChange={(selectedOptions) => handleRoleChange(row.original.roles, selectedOptions)} // Pass roles field instead of id
+                className="basic-multi-select"
+                classNamePrefix="select"
                 />
             )
         },
