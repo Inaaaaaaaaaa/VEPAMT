@@ -17,10 +17,10 @@ const Login = ({ onLogin }) => {
       onLogin();
 
       // Store the auth token in localStorage
-      localStorage.setItem('authToken', 'dummyToken'); // Add a token to localStorage
+      localStorage.setItem('authToken', 'dummyToken'); 
 
       // Navigate to the dashboard
-      navigate('/dashboard/submissions'); // Change to the default dashboard path
+      navigate('/dashboard/submissions'); 
     } else {
       // Alert invalid credentials if they don't match
       alert('Invalid credentials');

@@ -39,14 +39,14 @@ function App() {
     return (
         <Router>
             <Routes>
+                {/* Redirect the root path to login or dashboard based on authentication */}
+                <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard/submissions" : "/login"} replace />} />
+                
                 {/* If not authenticated, show only the login page */}
-                {!isAuthenticated ? (
-                    <>
-                    <Route path="/login" element={<Login onLogin={handleLogin} />} />
-                    <Route path="*" element={<Navigate to="/login" replace />} />
-                    </>
-                ) : (
-                    // If authenticated, show the dashboard layout and routes
+                <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                
+                {/* If authenticated, show the dashboard layout and routes */}
+                {isAuthenticated && (
                     <Route
                         path="/dashboard/*"
                         element={
@@ -70,6 +70,9 @@ function App() {
                         }
                     />
                 )}
+
+                {/* Catch-all route to redirect unknown paths */}
+                <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard/submissions" : "/login"} replace />} />
             </Routes>
         </Router>
     );
