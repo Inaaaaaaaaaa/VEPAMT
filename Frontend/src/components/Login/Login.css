@@ -1,0 +1,96 @@
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #e3e9f1;
+  }
+  
+  .login-left, .login-right {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .login-left {
+    background: url('') no-repeat center center;
+  }
+  
+  .login-right {
+    background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    margin-right: 400px;
+    height: 70%;
+}
+
+h2 {
+    margin-bottom: 44px; 
+    margin-top: -10px
+}
+
+.input-group {
+    display: flex;
+    align-items: center; 
+    margin-bottom: 50px;
+    margin-top: 20px;
+}
+
+.login-right p {
+    color: grey;
+    margin-top: -25px; 
+    margin-bottom: 20px; 
+}
+
+.input-group label {
+    margin-right: 10px; 
+    white-space: nowrap; 
+}
+
+input {
+    flex-grow: 1; 
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    color: black; /* Adjusted for better readability */
+    border: #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: -10px;
+    margin-left: 10px;
+}
+
+button:hover {
+    background-color: #c6defa;
+}
+
+.forgot-password, .signup-text {
+    text-align: center;
+    margin-top: 20px;
+}
+
+a {
+    color: #007BFF;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.login-logo {
+    width: 140px; 
+    height: auto;  
+    margin-top: -20px; 
+    margin-bottom: 30px;  
+}
+
+
+
