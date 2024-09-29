@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './Login.css';
 import logo from './logo.png';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8080/api/login', {
-        username,
-        password,
-      });
+    
+    // Check hardcoded credentials
+    if (username === 'Ina' && password === 'helloworld1234') {
+      // Call the onLogin function to update authentication state
+      onLogin();
 
-      if (response.data === 'Login successful!') {
-        navigate('/dashboard');
-      } else {
-        alert('Invalid credentials');
-      }
-    } catch (error) {
-      console.error('There was an error logging in!', error);
+      // Store the auth token in localStorage
+      localStorage.setItem('authToken', 'dummyToken'); // Add a token to localStorage
+
+      // Navigate to the dashboard
+      navigate('/dashboard/submissions'); // Change to the default dashboard path
+    } else {
+      // Alert invalid credentials if they don't match
       alert('Invalid credentials');
     }
   };

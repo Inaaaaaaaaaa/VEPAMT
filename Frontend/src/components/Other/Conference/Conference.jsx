@@ -43,10 +43,10 @@ const ConferenceHistory = () => {
   const [searchInput, setSearchInput] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedConference, setSelectedConference] = useState(null);
-  const [editingConference, setEditingConference] = useState(null); // State for the conference being edited
+  const [editingConference, setEditingConference] = useState(null);
   const [conferenceAttendees, setConferenceAttendees] = useState({});
   const [conferenceStatuses, setConferenceStatuses] = useState(conferenceDataInitial.map(conference => conference.status));
-  const [showAddForm, setShowAddForm] = useState(false); // State to toggle the form
+  const [showAddForm, setShowAddForm] = useState(false);
   const [newConference, setNewConference] = useState({
     name: '',
     date: '',
@@ -65,23 +65,6 @@ const ConferenceHistory = () => {
         console.error('Error fetching data:', error);
       });
   }, []);
-
-  const getRandomAttendees = (attendeeCount, conferenceId) => {
-    if (!usersData || usersData.length === 0) return [];
-    if (conferenceAttendees[conferenceId]) {
-      return conferenceAttendees[conferenceId];
-    }
-
-    const shuffledUsers = [...usersData].sort(() => 0.5 - Math.random());
-    const selectedAttendees = shuffledUsers.slice(0, attendeeCount);
-
-    setConferenceAttendees(prevState => ({
-      ...prevState,
-      [conferenceId]: selectedAttendees
-    }));
-
-    return selectedAttendees;
-  };
 
   const handleStatusChange = (index) => {
     const newStatuses = [...conferenceStatuses];
@@ -127,11 +110,11 @@ const ConferenceHistory = () => {
 
   const handleBack = () => {
     setSelectedConference(null);
-    setEditingConference(null); // Reset editing state
+    setEditingConference(null);
   };
 
   const handleAddConference = () => {
-    setShowAddForm(!showAddForm); // Toggle form visibility
+    setShowAddForm(!showAddForm);
   };
 
   const handleNewConferenceChange = (e) => {
@@ -151,12 +134,11 @@ const ConferenceHistory = () => {
       image: "https://upload.wikimedia.org/wikipedia/commons/1/10/AUT_Logo_New.jpg"
     };
     setConferenceData(prev => [...prev, newConf]);
-    setConferenceStatuses(prev => [...prev, 'confirmed']); // Set default status as 'confirmed'
+    setConferenceStatuses(prev => [...prev, 'confirmed']);
     setNewConference({ name: '', date: '', location: '', attendees: 0 });
-    setShowAddForm(false); // Hide form after adding
+    setShowAddForm(false);
   };
 
-  //edit conference
   const handleEditConference = (conference) => {
     setEditingConference(conference); 
   };
@@ -172,18 +154,12 @@ const ConferenceHistory = () => {
   const handleEditSubmit = (e) => {
     e.preventDefault();
     setConferenceData(prev => prev.map(conf => conf.id === editingConference.id ? editingConference : conf));
-    setEditingConference(null); // Close the edit form after submitting
+    setEditingConference(null);
   };
 
   const handleDeleteConference = (conferenceId) => {
-    setConferenceData(prev => prev.filter(conf => conf.id !== conferenceId)); // Remove conference
-    setEditingConference(null); // Close the form if it was being edited
-  };
-
-  const handleModalClose = (e) => {
-    if (e.target.className === 'modal') {
-      setEditingConference(null); // Close the modal if clicked outside the form
-    }
+    setConferenceData(prev => prev.filter(conf => conf.id !== conferenceId));
+    setEditingConference(null);
   };
 
   const renderStatusButton = (status, index) => {
@@ -204,14 +180,8 @@ const ConferenceHistory = () => {
     return (
       <button
         onClick={() => handleStatusChange(index)}
-        style={{
-          backgroundColor,
-          border: 'none',
-          color: 'black',
-          padding: '5px 15px',
-          cursor: 'pointer',
-          fontSize: '12px',
-        }}
+        className="status-btn"
+        style={{ backgroundColor }}
       >
         {label}
       </button>
@@ -270,32 +240,11 @@ const ConferenceHistory = () => {
             <p><strong>Location:</strong> {selectedConference.location}</p>
             <p><strong>Attendees:</strong> {selectedConference.attendees}</p>
           </div>
-          <h3>Attendee List:</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {getRandomAttendees(selectedConference.attendees, selectedConference.id).map((attendee, index) => (
-                <tr key={index}>
-                  <td>{attendee.id}</td>
-                  <td>{attendee.firstName}</td>
-                  <td>{attendee.lastName}</td>
-                  <td>{attendee.email}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
           <button className="btn btn-secondary" onClick={handleBack}>Back</button>
         </div>
       ) : 
       editingConference ? (
-        <div className="modal" onClick={handleModalClose}>
+        <div className="modal">
           <div className="modal-content">
             <h2>Edit Conference</h2>
             <form onSubmit={handleEditSubmit}>

@@ -1,79 +1,112 @@
 .update-container {
     background-color: rgb(255, 255, 255);
-    min-height: 42.3vw;
+    height: auto; 
+    max-height: 43.7vw; 
     max-width: 82%;
     margin: auto; 
     border-radius: 10px;
-    overflow: auto;
+    overflow-y: auto; 
+    overflow-x: hidden;
     margin-left: 280px;
     margin-top: 12px;
-    padding-top:50px; 
-    overflow-x: auto;
     position: relative;
-}
-
-.background {
+  }
+  .background {
     background-color: rgb(202, 228, 246);
     height: 100%;
     width: 100%; 
-}
-
-/* Add table styles */
-table {
+  }
+  
+  /* Add table styles */
+  table {
     width: 100%; 
     border-collapse: collapse; 
-    margin-top: -40px;
-}
-
-
-/*Header*/
-thead {
+    margin-top: -50px;
+  }
+  
+  /*Header*/
+  thead {
     background-color: #80b5ee; 
     color: white; 
-}
-
-th, td {
+  }
+  
+  th, td {
     padding: 2px 8px; 
     text-align: left; 
-}
-
-th {
+  }
+  
+  th {
     font-weight: bold;
-}
-
-/* Zebra striping for rows */
-tbody tr:nth-child(odd) {
+  }
+  
+  /* Zebra striping for rows */
+  tbody tr:nth-child(odd) {
     background-color: #f2f2f2; 
-}
-
-tbody tr:hover {
+  }
+  
+  tbody tr:hover {
     background-color: #ddd; 
-}
-
-.row h3 {
+  }
+  
+  .row h3 {
     margin: 0;
     padding: 10px; 
     flex: 1; 
     text-align: center; 
-}
-
-.fa {
+  }
+  
+  .fa {
     display: flex;
     justify-content: center; 
-}
-
-.edit-icon-button {
+  }
+  
+  .edit-icon-button {
     border: none;
     background: none;
     cursor: pointer; 
     padding: 0; 
     display: flex;
     justify-content: center;
-}
+  }
+  
+  th.id, td.id { width: 10%; }
+  th.name, td.name { width: 20%; }
+  th.email, td.email { width: 9%; }
+  th.roles, td.roles { width: 0%; }
+  
+ /* Change password input and button container */
+.change-password-cell {
+    display: flex;
+    gap: 20px; 
+    align-items: center;
+    margin-bottom: 9px; 
 
+  }
+  
+  /* Make password input smaller */
+  .change-password-cell .password-input {
+    width: 150px; /* Adjust width as needed */
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+ /* More specific selector to override potential conflicts */
+.change-password-cell button.change-password-btn {
+    background-color: #8086d2 !important; /* Set to purple or desired color */
+    color: white !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 3px 10px !important;
+    cursor: pointer !important;
+    max-width: 100px !important; /* Make button smaller */
+    margin-top: 10px;
 
-th.id, td.id { width: 10%; }
-th.name, td.name { width: 20%; }
-th.email, td.email { width: 9%; }
-th.roles, td.roles { width: 0%; }
-
+  }
+  
+  /* Hover effect for the button */
+  .change-password-cell button.change-password-btn:hover {
+    background-color: #732d91 !important; /* Darker purple */
+  }
+  
+  

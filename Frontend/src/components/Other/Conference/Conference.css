@@ -1,225 +1,152 @@
 :root {
-    --primary-color: #3498db;
-    --secondary-color: #2c3e50;
-  }
-  
-  .conference-container {
-    background-color: rgb(255, 255, 255);
-    height: 45.5vw;
-    max-width: 82%;
-    margin: auto;
-    border-radius: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin-left: 280px;
-    margin-top: 12px;
-    padding-top: 50px;
-    position: relative;
-  }
-  
-  /* Align details to the left in the conference details form */
-  .conference-details-left {
-    text-align: left;
-    margin-left: 0;
-    margin-bottom: 20px;
-  }
-  
-  .conference-details-left p {
-    margin: 5px 0;
-  }
-  
-  /* Form styling to ensure both Add and Edit forms are the same */
-  .add-conference-form,
-  .edit-conference-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    margin: 20px auto; /* Center the form */
-  }
-  
+  --primary-color: #3498db;
+  --secondary-color: #2c3e50;
+  --purple-color: #8e44ad;
+}
 
-  .add-conference-form input,
-  .edit-conference-form input {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    width: 100%;
-  }
-  
-  .add-conference-form label,
-  .edit-conference-form label {
-    font-weight: bold;
-    color: var(--secondary-color);
-    margin-bottom: 5px;
-  }
-  
-  .form-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end; /* Align buttons to the right */
-    margin-top: 20px;
-  }
-  
-  .add-conference-form button,
-  .edit-conference-form button {
-    width: fit-content;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-  }
-  
-  .add-conference-form button.btn-primary,
-  .edit-conference-form button.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  .add-conference-form button.btn-secondary,
-  .edit-conference-form button.btn-secondary {
-    background-color: var(--secondary-color);
-    color: white;
-  }
-  
-  .add-conference-form button.btn-danger,
-  .edit-conference-form button.btn-danger {
-    background-color: red;
-    color: white;
-  }
-  
-  body {
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--background-color);
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .conference-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    margin-top: 2rem;
-    gap: 3rem;
-  }
-  
-  .conference-card {
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-    margin-left: 5px;
-    width: 100%;
-  }
-  
-  .conference-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .conference-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-  
-  .conference-info {
-    padding: 1.5rem;
-  }
-  
-  .conference-info h2 {
-    margin-top: 0;
-    color: var(--secondary-color);
-  }
-  
-  .conference-info p {
-    margin-bottom: 0.5rem;
-  }
-  
-  .conference-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-  }
-  
-  .btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: #2980b9;
-  }
-  
-  .btn-secondary {
-    background-color: var(--secondary-color);
-    color: white;
-  }
-  
-  .btn-secondary:hover {
-    background-color: #34495e;
-  }
-  
-  .pagination-conference {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-    bottom: 10px;
-  }
-  
-  .pagination-conference button {
-    margin: 0 0.5rem;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  .conference-card {
-    animation: fadeIn 0.5s ease-in-out;
-  }
-  
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-  
-  .modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    position: relative;
-  }
-  
-  .modal-content form input {
-    margin-bottom: 10px;
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-  }
-  
+.conference-container {
+  background-color: rgb(255, 255, 255);
+  height: 43.9vw;
+  max-width: 82%;
+  margin: auto;
+  border-radius: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-left: 280px;
+  margin-top: 12px;
+  padding-top: 50px;
+  position: relative;
+}
+
+/* Align details to the left in the conference details form */
+.conference-details-left {
+  text-align: left;
+  margin-left: 0;
+  margin-bottom: 20px;
+}
+
+/* Shrink buttons */
+button, .btn {
+  width: auto;
+  max-width: 150px; /* Optional: limit max width */
+  padding: 8px 12px;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.add-conference-form button.btn-primary,
+.edit-conference-form button.btn-primary,
+.status-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.add-conference-form button.btn-secondary,
+.edit-conference-form button.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.add-conference-form button.btn-danger,
+.edit-conference-form button.btn-danger {
+  background-color: red;
+  color: white;
+}
+
+/* Conference card and list styling */
+.conference-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  margin-top: 2rem;
+  gap: 3rem;
+}
+
+.conference-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  margin-left: 5px;
+  width: 100%;
+}
+
+.conference-card:hover {
+  transform: translateY(-5px);
+}
+
+.conference-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.conference-info {
+  padding: 1.5rem;
+}
+
+.conference-info h2 {
+  margin-top: 0;
+  color: var(--secondary-color);
+}
+
+/* Pagination buttons */
+.pagination-conference {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  bottom: 10px;
+}
+
+.pagination-conference button {
+  margin: 0 0.5rem;
+}
+
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  position: relative;
+}
+
+.modal-content form input {
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.add-conference-btn {
+  background-color: var(--purple-color);
+  color: white;
+  max-width: 220px;
+  padding: 10px 20px; 
+}
+
+.pagination-conference .btn.btn-secondary {
+  background-color: #3498db;
+  color: rgb(14, 12, 12);
+}
+
+.pagination-conference .btn.btn-primary 
+{
+  background-color: #3498db;
+  color: rgb(14, 12, 12);
+}

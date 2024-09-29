@@ -1,9 +1,11 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 const ChangePasswordCell = ({ id, currentPassword, onPasswordChange, onChangePassword, isFocused, setFocus }) => {
+  // State for managing the password
+  const [password, setPassword] = useState(currentPassword);
   const inputRef = useRef(null);
 
-  // Log when the component receives focus
+  // Effect to handle focus when isFocused changes
   useEffect(() => {
     console.log(`isFocused: ${isFocused}, inputRef: ${inputRef.current}`);
     if (isFocused && inputRef.current) {
@@ -11,23 +13,32 @@ const ChangePasswordCell = ({ id, currentPassword, onPasswordChange, onChangePas
     }
   }, [isFocused]);
 
+  // Handle password input changes
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    onPasswordChange(id, value);
+  };
+
+  // Handle submitting the password change
+  const handleSubmit = () => {
+    onChangePassword(id);
+  };
+
   return (
-    <div>
+    <div className="change-password-cell">
       <input
-        ref={inputRef}
+        ref={inputRef} // Reference for focus
         type="password"
         placeholder="New Password"
-        value={currentPassword || ''}
-        onChange={(e) => {
-          console.log(`Password changed for ID ${id}:`, e.target.value);
-          onPasswordChange(id, e.target.value);
-        }}
-        onFocus={() => {
-          console.log(`Input focused for ID ${id}`);
-          setFocus(id);
-        }}
+        value={password || ''} // Controlled input state
+        onChange={handleInputChange}
+        onFocus={() => setFocus(id)} // Sets focus to the current input
+        className="password-input"
       />
-      <button onClick={() => onChangePassword(id)}>Change Password</button>
+      <button onClick={handleSubmit} className="change-password-btn">
+        Change Password
+      </button>
     </div>
   );
 };

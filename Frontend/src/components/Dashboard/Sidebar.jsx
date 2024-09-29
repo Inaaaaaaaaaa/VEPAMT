@@ -1,5 +1,5 @@
 import './Sidebar.css';
-import { NavLink } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { SiPowerpages } from "react-icons/si";
 import { RiAdminFill } from "react-icons/ri";
@@ -11,77 +11,87 @@ import { IoLogOutSharp } from "react-icons/io5";
 import { FaPerson } from "react-icons/fa6";
 
 const Sidebar = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Optionally clear any stored data here
+        // e.g., localStorage.clear(), sessionStorage.clear(), etc.
+
+        // Redirect to the login page
+        navigate('/login');
+    }
+
     return (
         <div className='sidenav'>
             <h1>Admin</h1>
             <p>_________________________</p>
             <ul>
 
-                {/*USER MANAGEMENT*/}
+                {/* USER MANAGEMENT */}
                 <li>
                     <h3>User Management</h3>
-                    <NavLink to="/history" activeClassName="active-link">
-                    <RiAdminFill size={30}/> Login and Register History
-                    </NavLink>
+                    <Link to="/dashboard/history">
+                        <RiAdminFill size={30}/> Login and Register History
+                    </Link>
                 </li>
                 <li>
-                    <NavLink to="/roles" activeClassName="active-link">
-                    <RiAdminFill size={30}/> Assign Roles
-                    </NavLink>
+                    <Link to="/dashboard/roles">
+                        <RiAdminFill size={30}/> Assign Roles
+                    </Link>
                 </li>
                 <li>
-                    <NavLink to="/update" activeClassName="active-link">
-                    <FaClipboardUser size={30}/> Update user 
-                    </NavLink>
+                    <Link to="/dashboard/update">
+                        <FaClipboardUser size={30}/> Update user 
+                    </Link>
                 </li>
                 <li>
-                    <NavLink to="/view" activeClassName="active-link">
-                    <FaPerson size={30}/> View all users
-                    </NavLink>
+                    <Link to="/dashboard/view">
+                        <FaPerson size={30}/> View all users
+                    </Link>
                 </li>
 
-                {/*PAPER MANAGEMENT*/}
+                {/* PAPER MANAGEMENT */}
                 <li>
                 <p>_________________________</p>                    
                     <h3>Paper</h3>
-                    <NavLink to="/submissions" activeClassName="active-link">
+                    <Link to="/dashboard/submissions">
                         <MdRateReview size={30}/> Submissions 
-                    </NavLink>
+                    </Link>
                 </li>
                 <li>
-                    <NavLink to="/review-management" activeClassName="active-link">
+                    <Link to="/dashboard/review-management">
                         <SiPowerpages size={30}/> Review Management  
-                    </NavLink>
+                    </Link>
                 </li>
 
-                {/*OTHER MANAGEMENT*/}
+                {/* OTHER MANAGEMENT */}
                 <li>
                 <p>_________________________</p>
                     <h3>Other</h3>
-                    <NavLink to="/conferences" activeClassName="active-link">
+                    <Link to="/dashboard/conferences">
                         <RiCalendarScheduleFill size={30}/> Conference
-                    </NavLink>
+                    </Link>
                 </li>
                 <li>
-                    <NavLink to="/notifications" activeClassName="active-link">
+                    <Link to="/dashboard/notifications">
                         <IoMdAnalytics size={30}/> Notifications
-                    </NavLink>
+                    </Link>
                 </li>
                 <li>
-                    <NavLink to="/settings" activeClassName="active-link">
+                    <Link to="/dashboard/settings">
                         <IoMdSettings size={30}/> Settings
-                    </NavLink>
+                    </Link>
                 </li>
 
-                {/*LOG OUT*/}
+                {/* LOG OUT */}
                 <li>
                 <p>_________________________</p>
-                    <NavLink to="/" activeClassName="active-link">
+                    <Link to="/" onClick={handleLogout}>
                         <IoLogOutSharp size={30}/> Log out
-                    </NavLink>
+                    </Link>
                 </li>
             </ul>
-            </div>
+        </div>
     )
 }
 
