@@ -1,31 +1,32 @@
-// PieChart.jsx
+// PieChart.jsx (First Graph)
 import React, { useEffect, useRef } from 'react';
 import { Chart, PieController, ArcElement, Tooltip, Legend, Title } from 'chart.js';
-import './PieChart.css'; 
+import './PieChart.css';
 
 Chart.register(PieController, ArcElement, Tooltip, Legend, Title);
 
 const PieChart = ({ statusCounts }) => {
-  const chartRef = useRef(null); 
+  const chartRef = useRef(null);
 
   useEffect(() => {
     if (chartRef.current && statusCounts) {
       const ctx = chartRef.current.getContext('2d');
 
-      // Get count for "Unsubmitted" and "Other Statuses"
-      const unsubmittedCount = statusCounts.unsubmitted || 0;
-      const otherCount = Object.values(statusCounts).reduce((acc, count) => acc + count, 0) - unsubmittedCount;
+      // Get counts for "Unsubmitted" and "Rejected"
+      const unsubmittedCount = statusCounts['Unsubmitted'] || 0;
+      const rejectedCount = statusCounts['Rejected'] || 0;
 
       const chartData = {
-        labels: ['Unsubmitted'],
+        labels: ['Unsubmitted', 'Rejected'],
         datasets: [{
-          data: [unsubmittedCount, otherCount],
+          data: [unsubmittedCount, rejectedCount],
           backgroundColor: [
             'rgba(255, 99, 132, 0.8)', // Color for Unsubmitted
+            'rgba(255, 206, 86, 0.8)' // Color for Rejected
           ],
           borderColor: [
             'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)'
+            'rgba(255, 206, 86, 1)'
           ],
           borderWidth: 1
         }]
@@ -43,7 +44,7 @@ const PieChart = ({ statusCounts }) => {
             },
             title: {
               display: true,
-              text: 'Unsubmitted Status Distribution'
+              text: 'Unsubmitted and Rejected Status Distribution'
             }
           },
           animation: {
@@ -58,9 +59,8 @@ const PieChart = ({ statusCounts }) => {
         myPieChart.destroy();
       };
     }
-  }, [statusCounts]); 
+  }, [statusCounts]);
 
-  // Chart container
   return (
     <div className="chart-container">
       <canvas ref={chartRef} id="myPieChart"></canvas>

@@ -1,5 +1,5 @@
 import './Sidebar.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { SiPowerpages } from "react-icons/si";
 import { RiAdminFill } from "react-icons/ri";
@@ -12,6 +12,7 @@ import { FaPerson } from "react-icons/fa6";
 
 const Sidebar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = () => {
         // Optionally clear any stored data here
@@ -20,6 +21,9 @@ const Sidebar = () => {
         // Redirect to the login page
         navigate('/login');
     }
+
+    // Function to check if the current route matches the link path
+    const isActive = (path) => location.pathname === path;
 
     return (
         <div className='sidenav'>
@@ -30,22 +34,22 @@ const Sidebar = () => {
                 {/* USER MANAGEMENT */}
                 <li>
                     <h3>User Management</h3>
-                    <Link to="/dashboard/history">
+                    <Link to="/dashboard/history" className={isActive('/dashboard/history') ? 'active' : ''}>
                         <RiAdminFill size={30}/> Login and Register History
                     </Link>
                 </li>
                 <li>
-                    <Link to="/dashboard/roles">
+                    <Link to="/dashboard/roles" className={isActive('/dashboard/roles') ? 'active' : ''}>
                         <RiAdminFill size={30}/> Assign Roles
                     </Link>
                 </li>
                 <li>
-                    <Link to="/dashboard/update">
+                    <Link to="/dashboard/update" className={isActive('/dashboard/update') ? 'active' : ''}>
                         <FaClipboardUser size={30}/> Update user 
                     </Link>
                 </li>
                 <li>
-                    <Link to="/dashboard/view">
+                    <Link to="/dashboard/view" className={isActive('/dashboard/view') ? 'active' : ''}>
                         <FaPerson size={30}/> View all users
                     </Link>
                 </li>
@@ -54,12 +58,12 @@ const Sidebar = () => {
                 <li>
                 <p>_________________________</p>                    
                     <h3>Paper</h3>
-                    <Link to="/dashboard/submissions">
+                    <Link to="/dashboard/submissions" className={isActive('/dashboard/submissions') ? 'active' : ''}>
                         <MdRateReview size={30}/> Submissions 
                     </Link>
                 </li>
                 <li>
-                    <Link to="/dashboard/review-management">
+                    <Link to="/dashboard/review-management" className={isActive('/dashboard/review-management') ? 'active' : ''}>
                         <SiPowerpages size={30}/> Review Management  
                     </Link>
                 </li>
@@ -68,17 +72,17 @@ const Sidebar = () => {
                 <li>
                 <p>_________________________</p>
                     <h3>Other</h3>
-                    <Link to="/dashboard/conferences">
+                    <Link to="/dashboard/conferences" className={isActive('/dashboard/conferences') ? 'active' : ''}>
                         <RiCalendarScheduleFill size={30}/> Conference
                     </Link>
                 </li>
                 <li>
-                    <Link to="/dashboard/notifications">
+                    <Link to="/dashboard/notifications" className={isActive('/dashboard/notifications') ? 'active' : ''}>
                         <IoMdAnalytics size={30}/> Notifications
                     </Link>
                 </li>
                 <li>
-                    <Link to="/dashboard/settings">
+                    <Link to="/dashboard/settings" className={isActive('/dashboard/settings') ? 'active' : ''}>
                         <IoMdSettings size={30}/> Settings
                     </Link>
                 </li>
