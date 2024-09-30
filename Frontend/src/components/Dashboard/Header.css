@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between; 
-    padding: 10px;
+    padding: 20px;
     background-color: rgb(243, 242, 242);
 }
 
@@ -30,7 +30,7 @@
     color: black;
     display: flex;
     align-items: center; 
-    margin-bottom: -px;
+    margin-bottom: -25px;
 }
 
 .dropdown-content {
