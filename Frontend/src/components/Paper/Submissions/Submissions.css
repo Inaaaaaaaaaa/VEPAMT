@@ -1,6 +1,6 @@
 .submission-container {
     background-color: rgb(255, 255, 255);
-    height: 45vw; 
+    height: 43.2vw; 
     max-width: 82%;
     margin: auto; 
     border-radius: 10px;
@@ -148,3 +148,80 @@ h1 {
     padding: 10px; 
   }
   
+/* Container for all charts */
+#chart-container {
+  display: flex;
+  justify-content: space-around; /* Distribute charts evenly */
+  align-items: flex-start; /* Align charts to the top */
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Individual chart item */
+.chart-item {
+  flex: 1; /* Allow items to grow equally */
+  margin: 0 10px; /* Space between charts */
+}
+
+/* Styling for smaller chart cards */
+.chart-card {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 150px; /* Adjust width as needed */
+}
+
+.chart-card h3 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.chart-card p {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+/* Status button styles */
+.status-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.status-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.status-btn.pending {
+  background-color: #ffecb3; /* Yellow background */
+  color: #ffa000; /* Darker yellow text */
+}
+
+.status-btn.unsubmitted {
+  background-color: #cfd8dc; /* Light grey background */
+  color: #607d8b; /* Darker grey text */
+}
+
+.status-btn.submitted {
+  background-color: #c8e6c9; /* Light green background */
+  color: #2e7d32; /* Darker green text */
+}
+
+.status-btn.rejected {
+  background-color: #ffcdd2; /* Light red background */
+  color: #d32f2f; /* Darker red text */
+}
+
+.status-btn:hover {
+  opacity: 0.8;
+}

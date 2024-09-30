@@ -1,31 +1,37 @@
-// PieChart.jsx
+// SubmittedPieChart.jsx
 import React, { useEffect, useRef } from 'react';
 import { Chart, PieController, ArcElement, Tooltip, Legend, Title } from 'chart.js';
 import './PieChart.css'; 
 
 Chart.register(PieController, ArcElement, Tooltip, Legend, Title);
 
-const PieChart = ({ statusCounts }) => {
+const SubmittedPieChart = ({ statusCounts }) => {
   const chartRef = useRef(null); 
 
   useEffect(() => {
     if (chartRef.current && statusCounts) {
       const ctx = chartRef.current.getContext('2d');
 
-      // Get count for "Unsubmitted" and "Other Statuses"
-      const unsubmittedCount = statusCounts.unsubmitted || 0;
-      const otherCount = Object.values(statusCounts).reduce((acc, count) => acc + count, 0) - unsubmittedCount;
+      // Calculate the total count of all statuses
+      const total = Object.values(statusCounts).reduce((acc, count) => acc + count, 0);
+      const submittedCount = statusCounts.submitted || 0;
+      const notSubmittedCount = total - submittedCount;
 
+      // Prepare data specifically for "submitted" status
       const chartData = {
-        labels: ['Unsubmitted'],
+        labels: ['Submitted'],
         datasets: [{
-          data: [unsubmittedCount, otherCount],
+          data: [
+            submittedCount, 
+            notSubmittedCount
+          ],
           backgroundColor: [
-            'rgba(255, 99, 132, 0.8)', // Color for Unsubmitted
+            'rgba(54, 162, 235, 0.8)', // Blue for submitted
+            'rgba(153, 102, 255, 0.8)' // Purple for not submitted
           ],
           borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)'
+            'rgba(54, 162, 235, 1)',
+            'rgba(153, 102, 255, 1)'
           ],
           borderWidth: 1
         }]
@@ -43,7 +49,7 @@ const PieChart = ({ statusCounts }) => {
             },
             title: {
               display: true,
-              text: 'Unsubmitted Status Distribution'
+              text: 'Submitted Status Distribution'
             }
           },
           animation: {
@@ -63,9 +69,9 @@ const PieChart = ({ statusCounts }) => {
   // Chart container
   return (
     <div className="chart-container">
-      <canvas ref={chartRef} id="myPieChart"></canvas>
+      <canvas ref={chartRef} id="submittedPieChart"></canvas>
     </div>
   );
 };
 
-export default PieChart;
+export default SubmittedPieChart;
