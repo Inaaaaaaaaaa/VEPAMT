@@ -35,7 +35,7 @@ const Login = ({ onLogin }) => {
       <div className="login-right">
         <img src={logo} alt="Logo" className="login-logo" />
         <h2>Welcome Back!</h2>
-        <p>Login using your Admin account</p>
+        <p className="login-details2">Login using your admin account</p>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label htmlFor="username">Username:</label>

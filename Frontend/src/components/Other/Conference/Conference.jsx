@@ -170,7 +170,7 @@ const ConferenceHistory = () => {
       backgroundColor = 'green';
       label = 'Confirmed';
     } else if (status === 'waiting') {
-      backgroundColor = 'yellow';
+      backgroundColor = '#b8860b';
       label = 'Pending';
     } else {
       backgroundColor = 'red';
