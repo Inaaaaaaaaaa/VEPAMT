@@ -17,13 +17,46 @@
 .icon-group {
     display: flex;
     align-items: center;
-    gap: 10px; 
+    margin-left: 5px; 
+    gap: 5px;
+    margin-top: 1px;
+    white-space: nowrap;
 }
 
-.icon, .dropdown {
+.icon, .dropdown button {
     border: none;
     background: transparent;
     cursor: pointer;
     color: black;
+    display: flex;
+    align-items: center; 
+    margin-bottom: -20px;
 }
 
+.dropdown-content {
+    position: absolute; 
+    background-color: #f9f9f9; 
+    min-width: 160px; 
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); 
+    z-index: 1;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+}
+
+.icon {
+    position: relative; 
+}
+
+.dropdown {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}

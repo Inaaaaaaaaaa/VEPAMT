@@ -1,6 +1,6 @@
 .submission-container {
     background-color: rgb(255, 255, 255);
-    height: 45.5vw; 
+    height: 45vw; 
     max-width: 82%;
     margin: auto; 
     border-radius: 10px;
@@ -119,13 +119,12 @@ h1 {
   .pagination button {
     margin: 0 5px;
     padding: 5px 10px;
-    font-size: 1em;
     border: none;
-    background-color: #3498db;
-    color: white;
-    border-radius: 4px;
+    background-color: #d0e1f8;
+    color: black;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    border-radius: 5px;
+    margin-top: -20px;
   }
   
   .pagination button:disabled {
@@ -134,10 +133,18 @@ h1 {
   }
   
   .pagination button.active {
-    background-color: #2980b9;
+    background-color: #71b0f4;
+    color: rgb(10, 4, 4);
   }
   
   .pagination button:hover:not(:disabled) {
     background-color: #2980b9;
+  }
+  
+  #papers-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px; 
+    padding: 10px; 
   }
   

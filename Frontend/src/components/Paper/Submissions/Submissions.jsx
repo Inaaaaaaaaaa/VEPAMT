@@ -14,7 +14,7 @@ const Submissions = () => {
   const [sortBy, setSortBy] = useState('date');
   const [filteredPapers, setFilteredPapers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 6;
   const [statusCounts, setStatusCounts] = useState({});
 
   useEffect(() => {

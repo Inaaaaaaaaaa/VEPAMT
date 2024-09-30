@@ -1,6 +1,7 @@
 import { IoNotificationsCircleOutline } from "react-icons/io5";
 import React, { useState } from 'react';
 import './Header.css';
+import { CgProfile } from "react-icons/cg";
 
 const Header = ({ hasUnreadNotifications }) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -27,7 +28,8 @@ const Header = ({ hasUnreadNotifications }) => {
                 </button>
                 <div className='dropdown'>
                     <button onClick={toggleDropdown} className="dropdown">
-                        <b>Ina Youn</b>
+                        <CgProfile size={30} style={{ marginRight: '5px' }} />
+                        <b>  Ina Youn</b>
                     </button>
                     {dropdownOpen && (
                         <div className="dropdown-content" style={{ position: 'absolute', backgroundColor: '#f9f9f9', minWidth: '160px', boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)', zIndex: 1 }}>
