@@ -1,6 +1,6 @@
 .review-container {
     background-color: rgb(255, 255, 255);
-    height: 45vw; 
+    height: 44.1vw; 
     max-width: 82%;
     margin: auto; 
     border-radius: 10px;
@@ -38,19 +38,23 @@
     font-size: 14px;
 }
   
+/* Add more space above the "View" button */
 .paper-actions {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: center; /* Center the button if needed */
+  margin-top: 20px; /* Increase spacing from elements above */
 }
-  
+
 .paper-actions button {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px; /* Increase this if you want more space below */
 }
+
   
 .paper-actions button:hover {
     background-color: #2980b9;
@@ -162,8 +166,28 @@
     border-radius: 4px;
     cursor: pointer;
   }
-
+  
   .status-btn {
-    margin-top: 12px; /* Adjust this value as needed */
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .status-btn.assigned {
+    background-color: #c8e6c9; /* Light green background */
+    color: #2e7d32; /* Darker green text */
+  }
+  
+  .status-btn.unassigned {
+    background-color: #ffcdd2; /* Light red background */
+    color: #d32f2f; /* Darker red text */
+  }
+  
+  .status-btn:hover {
+    opacity: 0.8;
   }
   
