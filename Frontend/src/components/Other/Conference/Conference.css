@@ -150,3 +150,150 @@ button, .btn {
   background-color: #3498db;
   color: rgb(14, 12, 12);
 }
+
+/* Modal overlay */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Modal content box */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px; /* Set a max-width for better form layout */
+  width: 90%; /* Responsive width */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Form inside modal */
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between form fields */
+}
+
+/* Style for input fields */
+.modal-content input {
+  padding: 8px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+/* Button styling */
+.modal-content .btn {
+  padding: 8px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.modal-content .btn-primary {
+  background-color: #353636;
+  color: white;
+  margin-left: 20px;
+}
+
+.modal-content .btn-primary:hover {
+  background-color: #2980b9;
+}
+
+.modal-content .btn-secondary {
+  background-color: #7f8c8d;
+  color: white;
+  margin-left: 10px; /* Space between buttons */
+}
+
+.modal-content .btn-secondary:hover {
+  background-color: #95a5a6;
+}
+/* Scrollable container for select user dropdowns */
+.attendee-select-container {
+  max-height: 200px; 
+  overflow-y: auto; 
+  margin: 10px 0;
+  padding-right: 5px; 
+}
+
+/* Styling for individual select dropdowns */
+.attendee-select-container select {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Container for viewing conference details */
+.view-details-container {
+  max-width: 600px;
+  margin: 20px auto; /* Center align */
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Header and sections */
+.view-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.view-details-section {
+  margin-bottom: 15px;
+  font-size: 1.1em;
+}
+
+.view-details-attendees h3 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #3498db; /* Optional color for header */
+}
+
+.view-details-attendees ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.view-details-attendees li {
+  margin-bottom: 5px;
+}
+
+/* Style for back button */
+.view-details-container .btn-secondary:hover {
+  background-color: #1c6e93;
+}
+
+.view-details-attendees {
+  margin-top: 30px; /* Add some space between the label and the list */
+}
+
+.view-details-attendees h3 {
+  margin-bottom: 10px; /* Space below the label */
+}
+
+.view-details-attendees ul {
+  list-style-type: none; /* Optional: removes bullet points */
+  padding-left: 0;
+  margin-top: 10px; /* Adds space between the label and the list */
+}
+
+.view-details-attendees ul li {
+  margin-bottom: 40px; /* Adds space between each list item */
+}

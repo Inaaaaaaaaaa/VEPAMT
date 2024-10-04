@@ -13,6 +13,7 @@ const Submissions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const [statusCounts, setStatusCounts] = useState({});
+  const [editPaperId, setEditPaperId] = useState({ id: null, value: '' }); // State for editing paper ID
 
   useEffect(() => {
     // Load saved data from localStorage first
@@ -35,6 +36,7 @@ const Submissions = () => {
             firstName: paper.firstName || '', // Ensure firstName is a string
             lastName: paper.lastName || '', // Ensure lastName is a string
             submissions_status: paper.submissions_status || 'Unsubmitted', // Default to 'Unsubmitted'
+            paperId: paper.paperId || '', // Initialize Paper ID
           }));
           setData(papersData);
           setFilteredPapers(papersData);
@@ -77,6 +79,27 @@ const Submissions = () => {
     });
   };
 
+  // Handle Paper ID change and update state and localStorage
+  const handlePaperIdChange = (id, value) => {
+    setData((prevData) => {
+      const updatedData = prevData.map((item) =>
+        item.id === id ? { ...item, paperId: value } : item
+      );
+      setFilteredPapers(updatedData);
+
+      // Save the updated data to Local Storage
+      localStorage.setItem('submissionData', JSON.stringify(updatedData));
+      
+      return updatedData;
+    });
+  };
+
+  // Save Paper ID changes
+  const savePaperIdChange = () => {
+    handlePaperIdChange(editPaperId.id, editPaperId.value);
+    setEditPaperId({ id: null, value: '' });
+  };
+
   // Separate counts for the two graphs
   const unsubmittedRejectedCounts = {
     Unsubmitted: statusCounts['Unsubmitted'] || 0,
@@ -114,7 +137,23 @@ const Submissions = () => {
       <div id="papers-container">
         {currentItems.map((paper) => (
           <div key={paper.id} className="paper-card">
-            <div className="paper-title">{paper.paperId || 'No Paper ID'}</div>
+            {editPaperId.id === paper.id ? (
+              // Input field for editing Paper ID
+              <input
+                type="text"
+                value={editPaperId.value}
+                onChange={(e) => setEditPaperId({ id: paper.id, value: e.target.value })}
+                onBlur={savePaperIdChange}
+                autoFocus
+              />
+            ) : (
+              <div
+                className="paper-title"
+                onClick={() => setEditPaperId({ id: paper.id, value: paper.paperId })}
+              >
+                {paper.paperId || 'No Paper ID (Click to Edit)'}
+              </div>
+            )}
             <div className="paper-author">
               {paper.firstName} {paper.lastName}
             </div>

@@ -1,6 +1,6 @@
 .submission-container {
     background-color: rgb(255, 255, 255);
-    height: 43.2vw; 
+    height: 44vw; 
     max-width: 82%;
     margin: auto; 
     border-radius: 10px;
@@ -200,6 +200,7 @@ h1 {
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 5px; /* Ensure there's a small space between the text and button */
 }
 
 .status-btn.pending {
