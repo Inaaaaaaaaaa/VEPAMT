@@ -9,11 +9,9 @@ const Roles = () => {
     const [data, setData] = useState([]);
 
     const roleSelection = [
-        //role selection manually 
         { value: 'Author', label: 'Author' },
         { value: 'Reviewer', label: 'Reviewer' },
         { value: 'Organizer', label: 'Organizer' },
-
     ];
 
     useEffect(() => {
@@ -31,13 +29,20 @@ const Roles = () => {
         setSearchInput(e.target.value.toLowerCase());
     };
 
-        const handleRoleChange = (roles, selectedOptions) => {
+    const handleRoleChange = (userId, selectedOptions) => {
         const selectedRoles = selectedOptions.map(option => option.value); // Extract the selected role values
-    
-        // Pass the roles field (from MySQL) instead of roleId in the URL
-        axios.put(`http://localhost:8080/roles/${roles}`, { roles: selectedRoles })
+
+        // Send updated roles to backend for the specific user ID
+        axios.put(`http://localhost:8080/roles/${userId}`, { roles: selectedRoles })
             .then(response => {
                 console.log('Role updated successfully', response.data);
+                
+                // Update the local state to reflect the role changes in the UI
+                setData(prevData => 
+                    prevData.map(user => 
+                        user.id === userId ? { ...user, roles: selectedRoles.join(', ') } : user
+                    )
+                );
             })
             .catch(error => {
                 if (error.response) {
@@ -50,7 +55,6 @@ const Roles = () => {
                 }
             });
     };
-    
 
     const filteredData = useMemo(() => {
         return data.filter(item =>
@@ -62,7 +66,6 @@ const Roles = () => {
         );
     }, [searchInput, data]);
 
-    //list of column name and their database variables 
     const columns = useMemo(() => [
         { Header: "ID", accessor: "id" },
         { Header: "First name", accessor: "firstName" },
@@ -70,21 +73,21 @@ const Roles = () => {
         { Header: "Email", accessor: "email" },
         { Header: "Role", accessor: "roles" },
         {
-            //allow assign roles to be a drop downbox based on the roles in the database
+            // Dropdown for assigning roles
             Header: "Assign role",
             accessor: "role",
             Cell: ({ row }) => (
                 <Select
-                options={roleSelection}
-                isMulti
-                value={roleSelection.filter(option => row.original.roles && row.original.roles.split(', ').includes(option.value))}
-                onChange={(selectedOptions) => handleRoleChange(row.original.roles, selectedOptions)} // Pass roles field instead of id
-                className="basic-multi-select"
-                classNamePrefix="select"
+                    options={roleSelection}
+                    isMulti
+                    value={roleSelection.filter(option => row.original.roles && row.original.roles.split(', ').includes(option.value))}
+                    onChange={(selectedOptions) => handleRoleChange(row.original.id, selectedOptions)} // Pass user ID
+                    className="basic-multi-select"
+                    classNamePrefix="select"
                 />
             )
         },
-    ], []);
+    ], [roleSelection]);
 
     const {
         getTableProps,
@@ -95,32 +98,38 @@ const Roles = () => {
     } = useTable({ columns, data: filteredData });
 
     return (
-        //contents within the container to display the tables
-            <div className='roles-container'>
-                <table {...getTableProps()}>
-                    <thead>
-                        {headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map(column => (
-                                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+        <div className='roles-container'>
+            <input
+                type="text"
+                placeholder="Search"
+                value={searchInput}
+                onChange={handleSearchChange}
+                className="search-input"
+            />
+            <table {...getTableProps()} className="roles-table">
+                <thead>
+                    {headerGroups.map(headerGroup => (
+                        <tr {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map(column => (
+                                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                            ))}
+                        </tr>
+                    ))}
+                </thead>
+                <tbody {...getTableBodyProps()}>
+                    {rows.map(row => {
+                        prepareRow(row);
+                        return (
+                            <tr {...row.getRowProps()}>
+                                {row.cells.map(cell => (
+                                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                                 ))}
                             </tr>
-                        ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                        {rows.map(row => {
-                            prepareRow(row);
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {row.cells.map(cell => (
-                                        <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </div>
     );
 };
 

@@ -7,7 +7,7 @@ const ConferenceHistory = () => {
     {
       id: 1,
       name: "COMP702 Paper Review Conference",
-      date: "2024-08-21", // Use 'yyyy-mm-dd' for input compatibility
+      date: "2024-08-13",
       location: "WZ1101",
       attendees: 10,
       image: "https://upload.wikimedia.org/wikipedia/commons/1/10/AUT_Logo_New.jpg",
@@ -175,7 +175,7 @@ const ConferenceHistory = () => {
     const newConf = {
       ...newConference,
       id: newId,
-      date: formatDate(newConference.date),
+      date: newConference.date,
       attendeesList: selectedAttendees,
       image: "https://upload.wikimedia.org/wikipedia/commons/1/10/AUT_Logo_New.jpg"
     };
@@ -204,11 +204,12 @@ const ConferenceHistory = () => {
     }));
   };
 
+  //Format date based on when user changes it
   const handleEditSubmit = (e) => {
     e.preventDefault();
     const updatedData = conferenceData.map(conf => 
       conf.id === editingConference.id 
-        ? { ...editingConference, date: formatDate(editingConference.date), attendeesList: editingAttendees }
+        ? { ...editingConference, date: editingConference.date, attendeesList: editingAttendees }
         : conf
     );
     setConferenceData(updatedData);
@@ -375,7 +376,7 @@ const ConferenceHistory = () => {
               <input
                 type="date"
                 name="date"
-                value={editingConference.date.split('/').reverse().join('-')}
+                value={editingConference.date}
                 onChange={handleEditChange}
                 required
               />
