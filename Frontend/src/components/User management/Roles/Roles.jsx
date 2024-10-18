@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import './Roles.css';
 import { useTable } from 'react-table';
 import axios from 'axios';
@@ -8,11 +8,11 @@ const Roles = () => {
     const [searchInput, setSearchInput] = useState('');
     const [data, setData] = useState([]);
 
-    const roleSelection = [
+    const roleSelection = useMemo(() => [
         { value: 'Author', label: 'Author' },
         { value: 'Reviewer', label: 'Reviewer' },
         { value: 'Organizer', label: 'Organizer' },
-    ];
+    ], []);
 
     useEffect(() => {
         // Fetch data from the backend
@@ -29,32 +29,24 @@ const Roles = () => {
         setSearchInput(e.target.value.toLowerCase());
     };
 
-    const handleRoleChange = (userId, selectedOptions) => {
-        const selectedRoles = selectedOptions.map(option => option.value); // Extract the selected role values
+    const handleRoleChange = useCallback((userId, selectedOptions) => {
+        const selectedRoles = selectedOptions.map(option => option.value);
 
-        // Send updated roles to backend for the specific user ID
         axios.put(`http://localhost:8080/roles/${userId}`, { roles: selectedRoles })
             .then(response => {
                 console.log('Role updated successfully', response.data);
-                
-                // Update the local state to reflect the role changes in the UI
                 setData(prevData => 
                     prevData.map(user => 
-                        user.id === userId ? { ...user, roles: selectedRoles.join(', ') } : user
+                        user.id === userId && user.roles !== selectedRoles.join(', ') 
+                        ? { ...user, roles: selectedRoles.join(', ') } 
+                        : user
                     )
                 );
             })
             .catch(error => {
-                if (error.response) {
-                    console.error('Server responded with an error:', error.response.data);
-                    console.error('Status code:', error.response.status);
-                } else if (error.request) {
-                    console.error('No response received:', error.request);
-                } else {
-                    console.error('Error setting up the request:', error.message);
-                }
+                console.error('Error updating roles:', error);
             });
-    };
+    }, []);
 
     const filteredData = useMemo(() => {
         return data.filter(item =>
@@ -73,21 +65,28 @@ const Roles = () => {
         { Header: "Email", accessor: "email" },
         { Header: "Role", accessor: "roles" },
         {
-            // Dropdown for assigning roles
             Header: "Assign role",
             accessor: "role",
-            Cell: ({ row }) => (
-                <Select
-                    options={roleSelection}
-                    isMulti
-                    value={roleSelection.filter(option => row.original.roles && row.original.roles.split(', ').includes(option.value))}
-                    onChange={(selectedOptions) => handleRoleChange(row.original.id, selectedOptions)} // Pass user ID
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                />
-            )
-        },
-    ], [roleSelection]);
+            Cell: ({ row }) => {
+                const selectedValues = useMemo(() => {
+                    return roleSelection.filter(option => 
+                        row.original.roles && row.original.roles.split(', ').includes(option.value)
+                    );
+                }, [row.original.roles, roleSelection]);
+
+                return (
+                    <Select
+                        options={roleSelection}
+                        isMulti
+                        value={selectedValues}
+                        onChange={(selectedOptions) => handleRoleChange(row.original.id, selectedOptions)}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                    />
+                );
+            }
+        }
+    ], [roleSelection, handleRoleChange]);
 
     const {
         getTableProps,
@@ -111,7 +110,7 @@ const Roles = () => {
                     {headerGroups.map(headerGroup => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map(column => (
-                                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                                <th key={column.id} {...column.getHeaderProps()}>{column.render('Header')}</th>
                             ))}
                         </tr>
                     ))}
@@ -122,7 +121,7 @@ const Roles = () => {
                         return (
                             <tr {...row.getRowProps()}>
                                 {row.cells.map(cell => (
-                                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                    <td key={cell.column.id} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                                 ))}
                             </tr>
                         );

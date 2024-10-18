@@ -12,10 +12,6 @@
     padding: 20px;
   }
   
-  .login-left {
-    background: url('') no-repeat center center;
-  }
-  
   .login-right {
     background: white;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);

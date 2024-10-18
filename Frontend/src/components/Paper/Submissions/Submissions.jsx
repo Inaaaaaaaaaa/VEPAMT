@@ -23,7 +23,7 @@ const Submissions = () => {
       const parsedData = JSON.parse(savedData);
       setData(parsedData);
       setFilteredPapers(parsedData);
-      const counts = _.countBy(parsedData, 'submissions_status');
+      const counts = _.countBy(parsedData, 'submissionsStatus');
       setStatusCounts(counts);
     } else {
       // If no saved data, fetch from backend
@@ -35,13 +35,13 @@ const Submissions = () => {
             title: paper.title || '', // Ensure title is a string
             firstName: paper.firstName || '', // Ensure firstName is a string
             lastName: paper.lastName || '', // Ensure lastName is a string
-            submissions_status: paper.submissions_status || 'Unsubmitted', // Default to 'Unsubmitted'
+            submissionsStatus: paper.submissionsStatus || 'Unsubmitted', // Default to 'Unsubmitted'
             paperId: paper.paperId || '', // Initialize Paper ID
           }));
           setData(papersData);
           setFilteredPapers(papersData);
 
-          const counts = _.countBy(papersData, 'submissions_status');
+          const counts = _.countBy(papersData, 'submissionsStatus');
           setStatusCounts(counts);
 
           // Save the initial data to localStorage
@@ -62,14 +62,14 @@ const Submissions = () => {
     // Update the status in the data state
     setData((prevData) => {
       const updatedData = prevData.map((item) =>
-        item.id === id ? { ...item, submissions_status: newStatus } : item
+        item.id === id ? { ...item, submissionsStatus: newStatus } : item
       );
 
       // Update filtered papers state
       setFilteredPapers(updatedData);
 
       // Recalculate status counts
-      const updatedCounts = _.countBy(updatedData, 'submissions_status');
+      const updatedCounts = _.countBy(updatedData, 'submissionsStatus');
       setStatusCounts(updatedCounts);
 
       // Save the updated data to Local Storage
@@ -158,10 +158,10 @@ const Submissions = () => {
               {paper.firstName} {paper.lastName}
             </div>
             <div className="paper-status">
-              Status: {paper.submissions_status}
+              Status: {paper.submissionsStatus}
               <button
-                className={`status-btn ${paper.submissions_status.toLowerCase()}`}
-                onClick={() => handleStatusChange(paper.id, paper.submissions_status)}
+                className={`status-btn ${paper.submissionsStatus.toLowerCase()}`}
+                onClick={() => handleStatusChange(paper.id, paper.submissionsStatus)}
               >
                 Change Status
               </button>
