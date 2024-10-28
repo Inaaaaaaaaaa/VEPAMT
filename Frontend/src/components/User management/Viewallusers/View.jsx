@@ -50,7 +50,7 @@ const View = () => {
   // Handle Edit button click
   const handleEditClick = (user) => {
     setEditingUser(user); // Set the user to be edited
-  
+
     // Pre-fill the form with the existing user data
     setNewUserFormData({
       firstName: user.firstName,
@@ -59,12 +59,10 @@ const View = () => {
       roles: user.roles,
       password: '' 
     });
-    
-  
+
     // Open the modal
     setIsAddingUser(true);
   };
-  
 
   // Handle Delete button click
   const handleDelete = async (userId) => {
@@ -106,10 +104,9 @@ const View = () => {
         email: newUserFormData.email,
         roles: newUserFormData.roles,
       };
-  
+
       // Check if we are editing a user
       if (editingUser) {
-        console.log("Submitting updated user:", newUser);  
         try {
           const response = await axios.put(`http://localhost:8080/users_name/${editingUser.id}`, newUser);
           setUsers(users.map(u => (u.id === editingUser.id ? response.data : u)));
@@ -121,12 +118,12 @@ const View = () => {
         // POST request for adding a new user
         newUser.password = 'defaultPassword123'; // Assign a default password for new users
         newUser.lastRegistered = new Date().toISOString(); // Automatically assign registration date
-  
+
         const response = await axios.post('http://localhost:8080/users_name', newUser);
         // Add the new user to the UI
         setUsers([...users, response.data]);
       }
-  
+
       // Reset the form and close the modal
       setIsAddingUser(false);
       setNewUserFormData({
@@ -140,7 +137,7 @@ const View = () => {
       console.error('Error adding/editing user:', error.response ? error.response.data : error.message);
     }
   };
-  
+
   // Cancel adding/editing user
   const handleCancelAddUser = () => {
     setIsAddingUser(false);
@@ -200,8 +197,10 @@ const View = () => {
                 onChange={handleAddUserInputChange}
                 required
               />
-              <button type="submit">{editingUser ? 'Save Changes' : 'Add User'}</button>
-              <button type="button" onClick={handleCancelAddUser}>Cancel</button>
+              <div className="button-group">
+                <button type="submit">{editingUser ? 'Save Changes' : 'Add User'}</button>
+                <button type="button" onClick={handleCancelAddUser}>Cancel</button>
+              </div>
             </form>
           </div>
         </div>

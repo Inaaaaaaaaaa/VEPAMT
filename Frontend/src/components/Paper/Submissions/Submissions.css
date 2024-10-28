@@ -1,6 +1,6 @@
 .submission-container {
     background-color: rgb(255, 255, 255);
-    height: 47.6vw;   
+    height: 43vw;    
     max-width: 82%;
     margin: auto; 
     border-radius: 10px;
@@ -60,6 +60,14 @@ h1 {
     font-style: italic;
     color: #7f8c8d;
     margin-bottom: 10px;
+  }
+
+  .paper-actions {
+    display: flex;
+    gap: 0px;
+    margin-left: -50px;
+    margin-top: -20px;
+    padding-top: 30px; /* Add padding at the top to separate from content */
   }
   
   .paper-abstract {
@@ -225,4 +233,117 @@ h1 {
 
 .status-btn:hover {
   opacity: 0.8;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 40px; /* Increased padding for a cleaner look */
+  border-radius: 12px; /* Softer corners */
+  width: 600px;
+  max-width: 90vw; /* Responsive width */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  display: block;
+  text-align: center;
+}
+
+.modal-content h2 {
+  color: #333;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.modal-form {
+  display: grid;
+  gap: 20px; /* More spacing between elements */
+}
+
+.modal-form label {
+  font-weight: 600;
+  color: #444;
+  text-align: left;
+  margin-bottom: 5px;
+  font-size: 0.9em;
+}
+
+.modal-form input,
+.modal-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+}
+
+.modal-form input:focus,
+.modal-form select:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.modal-form .full-width {
+  grid-column: span 2;
+}
+
+.modal-form button {
+  width: 45%;
+  padding: 12px;
+  font-size: 1em;
+  cursor: pointer;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.modal-form .save-btn {
+  background-color: #4CAF50;
+}
+
+.modal-form .save-btn:hover {
+  background-color: #388e3c;
+}
+
+.modal-form .exit-btn {
+  background-color: #f44336;
+}
+
+.modal-form .exit-btn:hover {
+  background-color: #d32f2f;
+}
+
+.modal-form .btn-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Adjust the grid layout for small screens */
+@media (min-width: 600px) {
+  .modal-form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-form button {
+    width: 100%;
+  }
+}
+
+.add-submission-btn {
+  margin-left: 1170px;
 }

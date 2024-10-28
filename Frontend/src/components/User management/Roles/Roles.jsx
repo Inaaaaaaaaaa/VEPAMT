@@ -5,8 +5,10 @@ import axios from 'axios';
 import Select from 'react-select';
 
 const Roles = () => {
-    const [searchInput, setSearchInput] = useState('');
     const [data, setData] = useState([]);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [selectedRoleFilters, setSelectedRoleFilters] = useState([]); // Array for multiple roles
+    const [nameSort, setNameSort] = useState('');
 
     const roleSelection = useMemo(() => [
         { value: 'Author', label: 'Author' },
@@ -24,10 +26,6 @@ const Roles = () => {
                 console.error('Error fetching data:', error);
             });
     }, []);
-
-    const handleSearchChange = (e) => {
-        setSearchInput(e.target.value.toLowerCase());
-    };
 
     const handleRoleChange = useCallback((userId, selectedOptions) => {
         const selectedRoles = selectedOptions.map(option => option.value);
@@ -49,14 +47,28 @@ const Roles = () => {
     }, []);
 
     const filteredData = useMemo(() => {
-        return data.filter(item =>
-            item.id.toString().includes(searchInput) ||
-            item.firstName.toLowerCase().includes(searchInput) ||
-            item.lastName.toLowerCase().includes(searchInput) ||
-            item.email.toLowerCase().includes(searchInput) ||
-            item.roles.toLowerCase().includes(searchInput)
-        );
-    }, [searchInput, data]);
+        let filtered = [...data];
+        
+        if (selectedRoleFilters.length > 0) {
+            filtered = filtered.filter(user => 
+                selectedRoleFilters.some(role => user.roles.includes(role))
+            );
+        }
+        
+        if (nameSort) {
+            if (nameSort === 'ascFirst') {
+                filtered.sort((a, b) => a.firstName.localeCompare(b.firstName));
+            } else if (nameSort === 'descFirst') {
+                filtered.sort((a, b) => b.firstName.localeCompare(a.firstName));
+            } else if (nameSort === 'ascLast') {
+                filtered.sort((a, b) => a.lastName.localeCompare(b.lastName));
+            } else if (nameSort === 'descLast') {
+                filtered.sort((a, b) => b.lastName.localeCompare(a.lastName));
+            }
+        }
+
+        return filtered;
+    }, [data, selectedRoleFilters, nameSort]);
 
     const columns = useMemo(() => [
         { Header: "ID", accessor: "id" },
@@ -96,15 +108,78 @@ const Roles = () => {
         prepareRow
     } = useTable({ columns, data: filteredData });
 
+    // Filter Modal Toggle
+    const toggleFilterModal = () => {
+        setIsFilterOpen(!isFilterOpen);
+    };
+
+    // Handle Role Filter Toggle for multiple roles
+    const handleRoleFilterChange = (selectedRole) => {
+        setSelectedRoleFilters(prevRoles => 
+            prevRoles.includes(selectedRole)
+                ? prevRoles.filter(role => role !== selectedRole) // Remove if already selected
+                : [...prevRoles, selectedRole] // Add if not already selected
+        );
+    };
+
+    // Handle Name Sort Toggle (only one sorting option at a time)
+    const handleNameSortChange = (sortOption) => {
+        setNameSort(prevSort => (prevSort === sortOption ? '' : sortOption));
+    };
+
     return (
         <div className='roles-container'>
-            <input
-                type="text"
-                placeholder="Search"
-                value={searchInput}
-                onChange={handleSearchChange}
-                className="search-input"
-            />
+            {/* Filter Button */}
+            <button onClick={toggleFilterModal} className="filter-button">Filter</button>
+
+            {/* Filter Modal */}
+            {isFilterOpen && (
+                <div className="filter-modal-overlay" onClick={toggleFilterModal}>
+                    <div className="filter-modal" onClick={e => e.stopPropagation()}>
+                        <h3>Filter Options</h3>
+                        <div>
+                            <p>Role:</p>
+                            {roleSelection.map(role => (
+                                <button 
+                                    key={role.value}
+                                    onClick={() => handleRoleFilterChange(role.value)}
+                                    className={`filter-option-button ${selectedRoleFilters.includes(role.value) ? 'selected' : ''}`}
+                                >
+                                    {role.label}
+                                </button>
+                            ))}
+                        </div>
+                        <div>
+                            <p>Name:</p>
+                            <button 
+                                onClick={() => handleNameSortChange('ascFirst')} 
+                                className={`filter-option-button ${nameSort === 'ascFirst' ? 'selected' : ''}`}
+                            >
+                                Ascending by First Name
+                            </button>
+                            <button 
+                                onClick={() => handleNameSortChange('descFirst')} 
+                                className={`filter-option-button ${nameSort === 'descFirst' ? 'selected' : ''}`}
+                            >
+                                Descending by First Name
+                            </button>
+                            <button 
+                                onClick={() => handleNameSortChange('ascLast')} 
+                                className={`filter-option-button ${nameSort === 'ascLast' ? 'selected' : ''}`}
+                            >
+                                Ascending by Last Name
+                            </button>
+                            <button 
+                                onClick={() => handleNameSortChange('descLast')} 
+                                className={`filter-option-button ${nameSort === 'descLast' ? 'selected' : ''}`}
+                            >
+                                Descending by Last Name
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <table {...getTableProps()} className="roles-table">
                 <thead>
                     {headerGroups.map(headerGroup => (

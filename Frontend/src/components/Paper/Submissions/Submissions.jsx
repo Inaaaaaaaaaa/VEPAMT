@@ -5,46 +5,52 @@ import _ from 'lodash';
 import PieChart from './PieChart';
 import SubmittedChart from './SubmittedChart';
 
-const statusOrder = ['Submitted', 'Unsubmitted', 'Pending', 'Rejected'];
+const statusOptions = ['Submitted', 'Unsubmitted', 'Pending', 'Rejected'];
 
 const Submissions = () => {
   const [data, setData] = useState([]);
   const [filteredPapers, setFilteredPapers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
   const [statusCounts, setStatusCounts] = useState({});
-  const [editPaperId, setEditPaperId] = useState({ id: null, value: '' }); // State for editing paper ID
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // For edit modal
+  const [newSubmission, setNewSubmission] = useState({
+    firstName: '',
+    lastName: '',
+    paperName: '',
+    status: 'Unsubmitted'
+  });
+  const [editSubmissionData, setEditSubmissionData] = useState(null); // State for the submission being edited
+
+  // Function to update status counts
+  const updateStatusCounts = (papers) => {
+    const counts = _.countBy(papers, 'submissionsStatus');
+    setStatusCounts(counts);
+  };
 
   useEffect(() => {
-    // Load saved data from localStorage first
     const savedData = localStorage.getItem('submissionData');
-
+    
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       setData(parsedData);
       setFilteredPapers(parsedData);
-      const counts = _.countBy(parsedData, 'submissionsStatus');
-      setStatusCounts(counts);
+      updateStatusCounts(parsedData);
     } else {
-      // If no saved data, fetch from backend
       axios
         .get('http://localhost:8080/users_name')
         .then((response) => {
           const papersData = response.data.map((paper) => ({
             ...paper,
-            title: paper.title || '', // Ensure title is a string
-            firstName: paper.firstName || '', // Ensure firstName is a string
-            lastName: paper.lastName || '', // Ensure lastName is a string
-            submissionsStatus: paper.submissionsStatus || 'Unsubmitted', // Default to 'Unsubmitted'
-            paperId: paper.paperId || '', // Initialize Paper ID
+            title: paper.title || '',
+            firstName: paper.firstName || '',
+            lastName: paper.lastName || '',
+            submissionsStatus: paper.submissionsStatus || 'Unsubmitted',
+            paperId: paper.paperId || '',
           }));
           setData(papersData);
           setFilteredPapers(papersData);
+          updateStatusCounts(papersData);
 
-          const counts = _.countBy(papersData, 'submissionsStatus');
-          setStatusCounts(counts);
-
-          // Save the initial data to localStorage
           localStorage.setItem('submissionData', JSON.stringify(papersData));
         })
         .catch((error) => {
@@ -53,136 +59,180 @@ const Submissions = () => {
     }
   }, []);
 
-  // Handle status change and update the frontend state and Local Storage
-  const handleStatusChange = (id, currentStatus) => {
-    const currentIndex = statusOrder.indexOf(currentStatus);
-    const nextIndex = (currentIndex + 1) % statusOrder.length;
-    const newStatus = statusOrder[nextIndex];
+  // Add new submission
+  const saveSubmission = () => {
+    const newPaper = {
+      id: data.length + 1,
+      paperId: newSubmission.paperName,
+      firstName: newSubmission.firstName,
+      lastName: newSubmission.lastName,
+      submissionsStatus: newSubmission.status,
+    };
 
-    // Update the status in the data state
-    setData((prevData) => {
-      const updatedData = prevData.map((item) =>
-        item.id === id ? { ...item, submissionsStatus: newStatus } : item
-      );
+    const updatedData = [...data, newPaper];
+    setData(updatedData);
+    setFilteredPapers(updatedData);
+    updateStatusCounts(updatedData);
 
-      // Update filtered papers state
-      setFilteredPapers(updatedData);
-
-      // Recalculate status counts
-      const updatedCounts = _.countBy(updatedData, 'submissionsStatus');
-      setStatusCounts(updatedCounts);
-
-      // Save the updated data to Local Storage
-      localStorage.setItem('submissionData', JSON.stringify(updatedData));
-
-      return updatedData;
-    });
+    localStorage.setItem('submissionData', JSON.stringify(updatedData));
+    setIsModalOpen(false);
   };
 
-  // Handle Paper ID change and update state and localStorage
-  const handlePaperIdChange = (id, value) => {
-    setData((prevData) => {
-      const updatedData = prevData.map((item) =>
-        item.id === id ? { ...item, paperId: value } : item
-      );
-      setFilteredPapers(updatedData);
+  // Delete a submission
+  const deleteSubmission = (id) => {
+    const updatedData = data.filter((paper) => paper.id !== id);
+    setData(updatedData);
+    setFilteredPapers(updatedData);
+    updateStatusCounts(updatedData);
 
-      // Save the updated data to Local Storage
-      localStorage.setItem('submissionData', JSON.stringify(updatedData));
-      
-      return updatedData;
-    });
+    localStorage.setItem('submissionData', JSON.stringify(updatedData));
   };
 
-  // Save Paper ID changes
-  const savePaperIdChange = () => {
-    handlePaperIdChange(editPaperId.id, editPaperId.value);
-    setEditPaperId({ id: null, value: '' });
+  // Open edit modal with pre-filled data
+  const openEditModal = (paper) => {
+    setEditSubmissionData(paper); // Set the data of the paper to be edited
+    setIsEditModalOpen(true);
   };
 
-  // Separate counts for the two graphs
-  const unsubmittedRejectedCounts = {
-    Unsubmitted: statusCounts['Unsubmitted'] || 0,
-    Rejected: statusCounts['Rejected'] || 0,
+  // Save edited submission
+  const saveEditedSubmission = () => {
+    const updatedData = data.map((paper) =>
+      paper.id === editSubmissionData.id ? { ...editSubmissionData } : paper
+    );
+    setData(updatedData);
+    setFilteredPapers(updatedData);
+    updateStatusCounts(updatedData);
+
+    localStorage.setItem('submissionData', JSON.stringify(updatedData));
+    setIsEditModalOpen(false); // Close edit modal after saving
   };
-
-  const submittedPendingCounts = {
-    Submitted: statusCounts['Submitted'] || 0,
-    Pending: statusCounts['Pending'] || 0,
-  };
-
-  // Pagination calculations
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPapers.slice(indexOfFirstItem, indexOfLastItem);
-
-  const totalPages = Math.ceil(filteredPapers.length / itemsPerPage);
-  const pageNumbers = [...Array(totalPages).keys()].map((i) => i + 1);
 
   return (
     <div className="submission-container">
-      <h1>Paper submissions</h1>
+      <h1>Paper Submissions</h1>
 
-      {/* Charts container */}
       <div id="chart-container">
         <div className="chart-item">
-          <PieChart statusCounts={unsubmittedRejectedCounts} />
+          <PieChart statusCounts={statusCounts} />
         </div>
         <div className="chart-item">
-          <SubmittedChart statusCounts={submittedPendingCounts} />
+          <SubmittedChart statusCounts={statusCounts} />
         </div>
       </div>
 
-      {/* Papers container */}
-      <div id="papers-container">
-        {currentItems.map((paper) => (
-          <div key={paper.id} className="paper-card">
-            {editPaperId.id === paper.id ? (
-              // Input field for editing Paper ID
+      <button onClick={() => setIsModalOpen(true)} className="add-submission-btn">Add Submission</button>
+
+      {/* Modal for Adding a Submission */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Add New Submission</h2>
+            <div className="modal-form">
+              <label>First Name</label>
               <input
                 type="text"
-                value={editPaperId.value}
-                onChange={(e) => setEditPaperId({ id: paper.id, value: e.target.value })}
-                onBlur={savePaperIdChange}
-                autoFocus
+                name="firstName"
+                value={newSubmission.firstName}
+                onChange={(e) => setNewSubmission({ ...newSubmission, firstName: e.target.value })}
+                placeholder="Enter first name"
               />
-            ) : (
-              <div
-                className="paper-title"
-                onClick={() => setEditPaperId({ id: paper.id, value: paper.paperId })}
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={newSubmission.lastName}
+                onChange={(e) => setNewSubmission({ ...newSubmission, lastName: e.target.value })}
+                placeholder="Enter last name"
+              />
+              <label>Paper Name</label>
+              <input
+                type="text"
+                name="paperName"
+                value={newSubmission.paperName}
+                onChange={(e) => setNewSubmission({ ...newSubmission, paperName: e.target.value })}
+                placeholder="Enter paper name"
+              />
+              <label>Status</label>
+              <select
+                name="status"
+                value={newSubmission.status}
+                onChange={(e) => setNewSubmission({ ...newSubmission, status: e.target.value })}
               >
-                {paper.paperId || 'No Paper ID (Click to Edit)'}
-              </div>
-            )}
-            <div className="paper-author">
-              {paper.firstName} {paper.lastName}
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+              <button onClick={saveSubmission}>Save</button>
+              <button onClick={() => setIsModalOpen(false)}>Exit</button>
             </div>
-            <div className="paper-status">
-              Status: {paper.submissionsStatus}
-              <button
-                className={`status-btn ${paper.submissionsStatus.toLowerCase()}`}
-                onClick={() => handleStatusChange(paper.id, paper.submissionsStatus)}
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Editing a Submission */}
+      {isEditModalOpen && editSubmissionData && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Edit Submission</h2>
+            <div className="modal-form">
+              <label>First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                value={editSubmissionData.firstName}
+                onChange={(e) =>
+                  setEditSubmissionData({ ...editSubmissionData, firstName: e.target.value })
+                }
+              />
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={editSubmissionData.lastName}
+                onChange={(e) =>
+                  setEditSubmissionData({ ...editSubmissionData, lastName: e.target.value })
+                }
+              />
+              <label>Paper Name</label>
+              <input
+                type="text"
+                name="paperName"
+                value={editSubmissionData.paperId}
+                onChange={(e) =>
+                  setEditSubmissionData({ ...editSubmissionData, paperId: e.target.value })
+                }
+              />
+              <label>Status</label>
+              <select
+                name="status"
+                value={editSubmissionData.submissionsStatus}
+                onChange={(e) =>
+                  setEditSubmissionData({ ...editSubmissionData, submissionsStatus: e.target.value })
+                }
               >
-                Change Status
-              </button>
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+              <button onClick={saveEditedSubmission}>Save Changes</button>
+              <button onClick={() => setIsEditModalOpen(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div id="papers-container">
+        {filteredPapers.map((paper) => (
+          <div key={paper.id} className="paper-card">
+            <div className="paper-title">{paper.paperId || 'No Paper ID'}</div>
+            <div className="paper-author">{paper.firstName} {paper.lastName}</div>
+            <div className="paper-status">Status: {paper.submissionsStatus}</div>
+            <div className="paper-actions">
+              <button onClick={() => openEditModal(paper)}>Edit</button>
+              <button onClick={() => deleteSubmission(paper.id)}>Delete</button>
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Pagination controls */}
-      <div className="pagination">
-        <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-          Previous
-        </button>
-        {pageNumbers.map((number) => (
-          <button key={number} onClick={() => setCurrentPage(number)} className={currentPage === number ? 'active' : ''}>
-            {number}
-          </button>
-        ))}
-        <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
-          Next
-        </button>
       </div>
     </div>
   );

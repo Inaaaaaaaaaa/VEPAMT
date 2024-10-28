@@ -1,6 +1,6 @@
 .roles-container {
     background-color: rgb(255, 255, 255);
-    height: 47.6vw; 
+    height: 43vw;   
     max-width: 82%;
     margin: auto; 
     border-radius: 10px;
@@ -101,4 +101,85 @@ th.roles, td.roles { width: 0%; }
 .pagination-roles span {
     font-size: 16px;
     margin: 0 10px;
+}
+/* Filter Button */
+.filter-button {
+    padding: 14px 28px;
+    border-radius: 50px;
+    border: none;
+    background-color: #3498db;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+    background-color: #2980b9;
+}
+
+/* Filter Modal */
+.filter-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.filter-modal {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    min-width: 400px;
+    min-height: 200px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+}
+
+.filter-modal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.filter-modal-section {
+    margin-bottom: 20px;
+}
+
+.filter-modal-section p {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Filter Option Buttons */
+.filter-option-button {
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.filter-option-button:hover {
+    background-color: #ddd;
+}
+
+.filter-option-button.selected {
+    background-color: #3498db;
+    color: white;
 }

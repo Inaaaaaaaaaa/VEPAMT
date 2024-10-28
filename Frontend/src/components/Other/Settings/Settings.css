@@ -1,54 +1,51 @@
-.settings-container
-{
-    background-color: rgb(255, 255, 255);
-    height: 51.2vw;   
+.settings-container {
+    background-color: #fff;
+    height: auto;
     max-width: 82%;
-    margin: auto; 
+    margin: auto;
     border-radius: 10px;
-    overflow: hidden;
+    padding: 20px;
     overflow-y: auto;
     margin-left: 280px;
     margin-top: 12px;
-    overflow-x: auto;
 }
 
 h1 {
+    font-size: 2rem;
     color: #333;
-    margin-bottom: 1.5rem;
+    margin-bottom: 20px;
     text-align: center;
 }
 
 .setting-group {
-    margin-bottom: 1.5rem;
-    margin-left: 80px;
-    width: 70%;
+    margin-bottom: 30px;
 }
 
 .setting-group h2 {
-    color: #555;
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    margin-left: 40px;
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 15px;
 }
 
 .setting-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
-    margin-left: 40px;
+    margin-bottom: 15px;
 }
 
 label {
     color: #333;
+    font-weight: bold;
+    width: 40%;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"],
 select {
-    width: 40%;
-    padding: 0.5rem;
+    width: 50%;
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1rem;
@@ -99,17 +96,21 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-button {
+.save-button {
+    display: block;
+    width: 100%;
     background-color: #4CAF50;
     border: none;
     color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
+    padding: 10px;
     font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
+    text-align: center;
     border-radius: 4px;
+    cursor: pointer;
     transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+.save-button:hover {
+    background-color: #45a049;
 }

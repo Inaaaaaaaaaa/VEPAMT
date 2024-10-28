@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import './Settings.css';
 
 const Settings = () => {
-    const [siteName, setSiteName] = useState('WebSim Creation Engine');
-    const [adminEmail, setAdminEmail] = useState('admin@websimcreationengine.com');
+    const [siteName, setSiteName] = useState('Virtual Event Planning and Management Tool');
+    const [adminEmail, setAdminEmail] = useState('ina@gmail.com');
     const [password, setPassword] = useState('');
     const [twoFactor, setTwoFactor] = useState(false);
     const [theme, setTheme] = useState('light');
@@ -97,7 +97,7 @@ const Settings = () => {
                 </div>
             </div>
             
-            <button onClick={saveSettings}>Save Changes</button>
+            <button onClick={saveSettings} className="save-button">Save Changes</button>
         </div>
     );
 };
