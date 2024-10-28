@@ -1,9 +1,9 @@
-// Sidebar.js
-import { Fragment, useState } from 'react';
+import React from 'react';
+import { Fragment, useState, useContext } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { AuthContext } from '../App';
 import {
-
   CalendarIcon,
   ChatBubbleBottomCenterIcon,
   Cog6ToothIcon,
@@ -13,22 +13,22 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon },
-  { name: 'Submission', href: '/submission', icon: DocumentDuplicateIcon },
-  { name: 'Conference', href: '/conference', icon: UsersIcon },
-  { name: 'Message', href: '/message', icon: ChatBubbleBottomCenterIcon },
-  { name: 'Calendar', href: '/Calendar', icon: CalendarIcon },
-];
-
-
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { userID } = useContext(AuthContext);
+  const location = useLocation();
+
+  const navigation = [
+    { name: 'Dashboard', href: `/user/${userID}`, icon: HomeIcon },
+    { name: 'Submission', href: `/user/${userID}/submission`, icon: DocumentDuplicateIcon },
+    { name: 'Conference', href: `/user/${userID}/conference`, icon: UsersIcon },
+    { name: 'Message', href: `/user/${userID}/message`, icon: ChatBubbleBottomCenterIcon },
+    { name: 'Calendar', href: `/user/${userID}/calendar`, icon: CalendarIcon },
+  ];
 
   return (
     <>
@@ -89,25 +89,19 @@ export default function Sidebar() {
                             <li key={item.name}>
                               <NavLink
                                 to={item.href}
-                                className={({ isActive }) =>
-                                  classNames(
-                                    isActive ? 'bg-blue-100 text-blue-600 shadow' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50',
-                                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                                  )
+                                className={
+                                  location.pathname === item.href
+                                    ? 'bg-blue-100 text-blue-600 shadow group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                    : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                                 }
                               >
-                                {({ isActive }) => (
-                                  <>
-                                    <item.icon
-                                      className={classNames(
-                                        isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-blue-600',
-                                        'h-6 w-6 shrink-0'
-                                      )}
-                                      aria-hidden="true"
-                                    />
-                                    {item.name}
-                                  </>
-                                )}
+                                <item.icon
+                                  className={
+                                    location.pathname === item.href ? 'text-blue-600 h-6 w-6 shrink-0' : 'text-gray-500 group-hover:text-blue-600 h-6 w-6 shrink-0'
+                                  }
+                                  aria-hidden="true"
+                                />
+                                {item.name}
                               </NavLink>
                             </li>
                           ))}
@@ -115,7 +109,7 @@ export default function Sidebar() {
                       </li>
                       <li className="mt-auto">
                         <NavLink
-                          to="/settings"
+                          to={`/user/${userID}/settings`}
                           className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-500 hover:bg-blue-50 hover:text-blue-600"
                         >
                           <Cog6ToothIcon
@@ -125,7 +119,7 @@ export default function Sidebar() {
                           Settings
                         </NavLink>
                         <NavLink
-                          to="/support"
+                          to={`/user/${userID}/support`}
                           className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-500 hover:bg-blue-50 hover:text-blue-600"
                         >
                           <span className="sr-only">Support</span>
@@ -153,32 +147,26 @@ export default function Sidebar() {
             />
           </div>
           <nav className="flex flex-1 flex-col">
-            <ul  className="flex flex-1 flex-col gap-y-7">
+            <ul className="flex flex-1 flex-col gap-y-7">
               <li>
-                <ul  className="-mx-2 space-y-1">
+                <ul className="-mx-2 space-y-1">
                   {navigation.map((item) => (
                     <li key={item.name}>
                       <NavLink
                         to={item.href}
-                        className={({ isActive }) =>
-                          classNames(
-                            isActive ? 'bg-blue-100 text-blue-600 shadow' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50',
-                            'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                          )
+                        className={
+                          location.pathname === item.href
+                            ? 'bg-blue-100 text-blue-600 shadow group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                            : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                         }
                       >
-                        {({ isActive }) => (
-                          <>
-                            <item.icon
-                              className={classNames(
-                                isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-blue-600',
-                                'h-6 w-6 shrink-0'
-                              )}
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </>
-                        )}
+                        <item.icon
+                          className={
+                            location.pathname === item.href ? 'text-blue-600 h-6 w-6 shrink-0' : 'text-gray-500 group-hover:text-blue-600 h-6 w-6 shrink-0'
+                          }
+                          aria-hidden="true"
+                        />
+                        {item.name}
                       </NavLink>
                     </li>
                   ))}
@@ -186,7 +174,7 @@ export default function Sidebar() {
               </li>
               <li className="mt-auto">
                 <NavLink
-                  to="/settings"
+                  to={`/user/${userID}/settings`}
                   className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-500 hover:bg-blue-50 hover:text-blue-600"
                 >
                   <Cog6ToothIcon
@@ -196,7 +184,7 @@ export default function Sidebar() {
                   Settings
                 </NavLink>
                 <NavLink
-                  to="/support"
+                  to={`/user/${userID}/support`}
                   className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-500 hover:bg-blue-50 hover:text-blue-600"
                 >
                   <span className="sr-only">Support</span>
