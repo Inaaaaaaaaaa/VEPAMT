@@ -69,7 +69,7 @@ const History = () => {
         text: 'Login and Registration History 2024',
         padding: {
           top: 0, 
-          bottom: 10, 
+          bottom: 15, 
         },
         position: 'top', 
       },
@@ -119,7 +119,7 @@ const History = () => {
     getTableBodyProps,
     headerGroups,
     prepareRow,
-    page, // Instead of using `rows`, use `page`
+    page,
     canPreviousPage,
     canNextPage,
     pageOptions,
@@ -131,11 +131,11 @@ const History = () => {
     {
       columns,
       data,
-      // Start on the first page
-      initialState: { pageIndex: 0 }, 
+      initialState: { pageIndex: 0, pageSize: 15 }, // Set pageSize to 15
     },
     usePagination
   );
+  
 
   return (
       <div className='update-container'>
