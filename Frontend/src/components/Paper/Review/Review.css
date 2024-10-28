@@ -16,6 +16,7 @@
     flex-wrap: wrap;
     gap: 20px;
     margin-left: 80px;
+    margin-top: 40px;
 }
   
 .paper-card {
@@ -191,3 +192,21 @@
     opacity: 0.8;
   }
   
+  .modal-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 20px;
+    justify-content: center; /* Centers the buttons horizontally */
+  }
+  
+  .modal-actions button {
+    padding: 8px 16px;
+    width: 55px;
+  }
+  
+  .filter-options
+  {
+    width: 200px;
+    margin-left: 1090px;
+    margin-top: -40px;
+  }

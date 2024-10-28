@@ -9,7 +9,7 @@ const ConferenceHistory = () => {
       name: "COMP702 Paper Review Conference",
       date: "2024-08-13",
       location: "WZ1101",
-      attendees: 10,
+      attendees: 3,
       image: "https://upload.wikimedia.org/wikipedia/commons/1/10/AUT_Logo_New.jpg",
       attendeesList: [],
     },
